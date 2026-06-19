@@ -3,9 +3,7 @@ package co.com.assets_service.model;
 import lombok.Getter;
 import lombok.Setter;
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
-
 import org.hibernate.annotations.CreationTimestamp;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 

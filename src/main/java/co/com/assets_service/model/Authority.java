@@ -6,7 +6,6 @@ import lombok.Setter;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Getter
 @Setter
@@ -29,6 +28,5 @@ public class Authority {
     private LocalDateTime dateCreation;
 
     @OneToMany(mappedBy = "authority")
-    @JsonManagedReference
     private Set<UserAuthority> users;
 }

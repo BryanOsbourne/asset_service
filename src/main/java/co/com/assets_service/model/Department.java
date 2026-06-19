@@ -1,25 +1,29 @@
 package co.com.assets_service.model;
 
 import lombok.*;
-import java.util.List;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.CreationTimestamp;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
-@Getter
 @Setter
+@Getter
 @Entity
-@Table(name = "cost_center")
-public class CostCenter {
+@Table(name = "department")
+public class Department {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 20, nullable = false, unique = true)
+    @Column(length = 50, nullable = false, unique = true)
     private String name;
+
+    @ManyToOne
+    @JoinColumn(name = "cost_center_id", nullable = false)
+    @JsonBackReference
+    private CostCenter costCenter;
 
     @CreationTimestamp
     @Column(updatable = false)
@@ -27,12 +31,4 @@ public class CostCenter {
 
     @UpdateTimestamp
     private LocalDateTime dateModification;
-
-    @OneToMany(
-            mappedBy = "costCenter",
-            cascade = CascadeType.ALL,
-            orphanRemoval = true
-    )
-    @JsonManagedReference
-    private List<Department> departments;
 }

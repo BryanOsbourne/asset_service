@@ -9,7 +9,8 @@ import lombok.AllArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CostCenterResponseDTO {
+public class DepartmentResponseDTO {
     private Long id;
     private String name;
+    private CostCenterResponseDTO costCenterResponseDTO;
 }
