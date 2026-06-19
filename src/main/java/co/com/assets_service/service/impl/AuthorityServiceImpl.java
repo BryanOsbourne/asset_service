@@ -7,9 +7,9 @@ import org.springframework.data.domain.Sort;
 import co.com.assets_service.model.Authority;
 import org.springframework.stereotype.Service;
 import org.springframework.data.domain.PageRequest;
+import co.com.assets_service.mapper.AuthorityMapper;
 import co.com.assets_service.dto.AuthorityResponseDTO;
 import co.com.assets_service.service.AuthorityService;
-import co.com.assets_service.mapper.AuthorityMapperImpl;
 import co.com.assets_service.exception.NoContentException;
 import co.com.assets_service.repository.AuthorityRepository;
 
@@ -17,7 +17,7 @@ import co.com.assets_service.repository.AuthorityRepository;
 @RequiredArgsConstructor
 public class AuthorityServiceImpl implements AuthorityService {
 
-    private final AuthorityMapperImpl authorityMapper;
+    private final AuthorityMapper authorityMapper;
     private final AuthorityRepository authorityRepository;
 
     @Override

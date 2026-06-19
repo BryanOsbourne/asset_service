@@ -7,8 +7,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import co.com.assets_service.dto.StateUpdateDTO;
 import co.com.assets_service.dto.StateCreateDTO;
+import co.com.assets_service.mapper.StateMapper;
 import co.com.assets_service.service.StateService;
-import co.com.assets_service.mapper.StateMapperImpl;
 import co.com.assets_service.dto.StateBasicResponseDTO;
 import co.com.assets_service.repository.StateRepository;
 import co.com.assets_service.exception.BusinessException;
@@ -18,7 +18,7 @@ import co.com.assets_service.exception.NoContentException;
 @RequiredArgsConstructor
 public class StateServiceImpl implements StateService {
 
-    private final StateMapperImpl stateMapper;
+    private final StateMapper stateMapper;
     private final StateRepository stateRepository;
 
     @Override

@@ -36,6 +36,7 @@ public class StateController {
             produces = "application/json"
     )
     public ResponseEntity<StateBasicResponseDTO> createState(@Valid @RequestBody StateCreateDTO stateCreateDTO) {
+        LOGGER.info("StateController - createState - stateCreateDTO: {}", stateCreateDTO);
         return new ResponseEntity<>(stateService.createState(stateCreateDTO), HttpStatus.CREATED);
     }
 
@@ -45,6 +46,7 @@ public class StateController {
             produces = "application/json"
     )
     public ResponseEntity<StateBasicResponseDTO> updateState(@Valid @RequestBody StateUpdateDTO stateUpdateDTO) {
+        LOGGER.info("StateController - updateState - stateUpdateDTO: {}", stateUpdateDTO);
         return new ResponseEntity<>(stateService.updateState(stateUpdateDTO), HttpStatus.OK);
     }
 

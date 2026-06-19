@@ -1,5 +1,7 @@
 package co.com.assets_service.controller;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.data.domain.Page;
@@ -18,6 +20,8 @@ public class UserAuthorityController {
 
     private final UserAuthorityService userAuthorityService;
 
+    private final Logger LOGGER = LoggerFactory.getLogger(UserAuthorityController.class);
+
     @GetMapping(
             value = "/findAll",
             params = {"page", "size", "userId"}
@@ -27,6 +31,7 @@ public class UserAuthorityController {
             @RequestParam int size,
             @RequestParam Long userId
     ) {
+        LOGGER.info("UserAuthorityController - getAllAuthoritiesByUserId - page: {}, size: {}, userId: {}", page, size, userId);
         return new ResponseEntity<>(userAuthorityService.getUserAuthoritiesByUserId(page, size, userId), HttpStatus.OK);
     }
 }

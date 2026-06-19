@@ -27,6 +27,7 @@ public class AuthenticationController {
             value = "/login"
     )
     public ResponseEntity<AuthenticationResponse> login(@Valid @RequestBody AuthenticationRequest request) {
+        LOGGER.info("AuthenticationController - login - request: {}", request);
         return new ResponseEntity<>(authenticationService.login(request), HttpStatus.OK);
     }
 }

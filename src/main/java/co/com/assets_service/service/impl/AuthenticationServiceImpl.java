@@ -3,9 +3,9 @@ package co.com.assets_service.service.impl;
 import lombok.RequiredArgsConstructor;
 import co.com.assets_service.model.User;
 import org.springframework.stereotype.Service;
+import co.com.assets_service.mapper.UserMapper;
 import co.com.assets_service.security.JwtService;
 import co.com.assets_service.service.UserService;
-import co.com.assets_service.mapper.UserMapperImpl;
 import co.com.assets_service.dto.UserBasicResponseDTO;
 import co.com.assets_service.service.AuthenticationService;
 import co.com.assets_service.security.AuthenticationRequest;
@@ -19,7 +19,7 @@ public class AuthenticationServiceImpl implements AuthenticationService {
 
     private final JwtService jwtService;
     private final UserService userService;
-    private final UserMapperImpl userMapper;
+    private final UserMapper userMapper;
     private final AuthenticationManager authenticationManager;
 
     @Override
