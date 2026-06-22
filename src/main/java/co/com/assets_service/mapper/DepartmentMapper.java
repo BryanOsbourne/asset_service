@@ -15,5 +15,5 @@ import co.com.assets_service.dto.DepartmentResponseDTO;
 public interface DepartmentMapper {
     Department createDTOToEntity(DepartmentCreateDTO departmentCreateDTO);
     @Mapping(source = "costCenter", target = "costCenterResponseDTO")
-    DepartmentResponseDTO entityToBasicResponseDTO(Department department);
+    DepartmentResponseDTO entityToResponseDTO(Department department);
 }

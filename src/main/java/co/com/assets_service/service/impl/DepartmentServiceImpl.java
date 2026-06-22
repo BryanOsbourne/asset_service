@@ -31,7 +31,7 @@ public class DepartmentServiceImpl implements DepartmentService {
         List<Department> DepartmentList = departmentRepository.findAll();
         if (DepartmentList.isEmpty())
             throw new NoContentException("Department-Not-Content-204", HttpStatus.NOT_FOUND, "No Departments found");
-        return DepartmentList.stream().map(departmentMapper::entityToBasicResponseDTO).toList();
+        return DepartmentList.stream().map(departmentMapper::entityToResponseDTO).toList();
     }
 
     @Override
@@ -59,7 +59,7 @@ public class DepartmentServiceImpl implements DepartmentService {
                 departmentMapper.createDTOToEntity(departmentCreateDTO)
         );
 
-        return departmentMapper.entityToBasicResponseDTO(department);
+        return departmentMapper.entityToResponseDTO(department);
     }
 
     @Override
@@ -84,6 +84,6 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         Department.setName(name);
         Department updatedDepartment = departmentRepository.save(Department);
-        return departmentMapper.entityToBasicResponseDTO(updatedDepartment);
+        return departmentMapper.entityToResponseDTO(updatedDepartment);
     }
 }
