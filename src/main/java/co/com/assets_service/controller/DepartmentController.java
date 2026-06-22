@@ -35,9 +35,9 @@ public class DepartmentController {
             consumes = "application/json",
             produces = "application/json"
     )
-    public ResponseEntity<DepartmentResponseDTO> createDepartment(@Valid @RequestBody DepartmentCreateDTO DepartmentCreateDTO) {
-        LOGGER.info("DepartmentController - createDepartment - DepartmentCreateDTO: {}", DepartmentCreateDTO);
-        return new ResponseEntity<>(DepartmentService.createDepartment(DepartmentCreateDTO), HttpStatus.CREATED);
+    public ResponseEntity<DepartmentResponseDTO> createDepartment(@Valid @RequestBody DepartmentCreateDTO departmentCreateDTO) {
+        LOGGER.info("DepartmentController - createDepartment - DepartmentCreateDTO: {}", departmentCreateDTO);
+        return new ResponseEntity<>(DepartmentService.createDepartment(departmentCreateDTO), HttpStatus.CREATED);
     }
 
     @PutMapping(
@@ -45,9 +45,9 @@ public class DepartmentController {
             consumes = "application/json",
             produces = "application/json"
     )
-    public ResponseEntity<DepartmentResponseDTO> updateDepartment(@Valid @RequestBody DepartmentUpdateDTO DepartmentUpdateDTO) {
-        LOGGER.info("DepartmentController - updateDepartment - DepartmentUpdateDTO: {}", DepartmentUpdateDTO);
-        return new ResponseEntity<>(DepartmentService.updateDepartment(DepartmentUpdateDTO), HttpStatus.OK);
+    public ResponseEntity<DepartmentResponseDTO> updateDepartment(@Valid @RequestBody DepartmentUpdateDTO departmentUpdateDTO) {
+        LOGGER.info("DepartmentController - updateDepartment - DepartmentUpdateDTO: {}", departmentUpdateDTO);
+        return new ResponseEntity<>(DepartmentService.updateDepartment(departmentUpdateDTO), HttpStatus.OK);
     }
 
 }

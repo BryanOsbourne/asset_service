@@ -33,6 +33,7 @@ public class CostCenter {
             cascade = CascadeType.ALL,
             orphanRemoval = true
     )
+    @Column(unique = true)
     @JsonManagedReference
     private List<Department> departments;
 }

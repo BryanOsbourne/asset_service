@@ -17,5 +17,5 @@ public class DepartmentCreateDTO {
     private String name;
 
     @NotNull(message = "Cost center is required")
-    private CostCenterCreateDTO costCenterCreateDTO;
+    private CostCenterResponseDTO costCenter;
 }
