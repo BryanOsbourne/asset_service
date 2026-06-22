@@ -1,10 +1,12 @@
 package co.com.assets_service.model;
 
 import lombok.*;
+import java.util.List;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.CreationTimestamp;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Setter
 @Getter
@@ -21,6 +23,13 @@ public class Manufacturer {
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT true")
     private Boolean isEnabled;
+
+    @OneToMany(
+            mappedBy = "manufacturer",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    @JsonManagedReference
+    private List<Computer> computers;
 
     @CreationTimestamp
     @Column(updatable = false)

@@ -26,9 +26,6 @@ public class ComputerCreateDTO {
     @NotBlank(message = "model is required")
     private String model;
 
-    @NotBlank(message = "internalCode is required")
-    private String internalCode;
-
     @Positive(message = "state center is required")
     @NotNull(message = "state center is required")
     private Long stateId;

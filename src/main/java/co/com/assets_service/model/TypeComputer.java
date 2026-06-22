@@ -2,11 +2,12 @@ package co.com.assets_service.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import java.util.List;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.CreationTimestamp;
-
-import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Setter
 @Getter
@@ -20,6 +21,13 @@ public class TypeComputer {
 
     @Column(length = 20, nullable = false, unique = true)
     private String name;
+
+    @OneToMany(
+            mappedBy = "typeComputer",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    @JsonManagedReference
+    private List<Computer> computers;
 
     @CreationTimestamp
     @Column(updatable = false)

@@ -12,13 +12,15 @@ import co.com.assets_service.dto.ComputerResponseDTO;
         uses = {
                 StateMapper.class,
                 TypeComputerMapper.class,
-                ManufacturerMapper.class
+                ManufacturerMapper.class,
+                InternalCodeMapper.class
         }
 )
 public interface ComputerMapper {
     @Mapping(source = "state", target = "stateResponseDTO")
     @Mapping(source = "typeComputer", target = "typeComputerResponseDTO")
     @Mapping(source = "manufacturer", target = "manufacturerResponseDTO")
+    @Mapping(source = "internalCode", target = "internalCodeResponseDTO")
     ComputerResponseDTO entityToResponseDTO(Computer computer);
     Computer createDTOToEntity(ComputerCreateDTO computerCreateDTO);
     Computer updateDTOToEntity(ComputerUpdateDTO computerUpdateDTO);

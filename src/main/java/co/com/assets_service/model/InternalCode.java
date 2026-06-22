@@ -12,18 +12,26 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @Setter
 @Getter
 @Entity
-@Table(name = "state")
-public class State {
+@Table(
+        name = "internal_code",
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"prefix, series, id"}),
+        }
+)
+public class InternalCode {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 20, nullable = false, unique = true)
-    private String name;
+    @Column(length = 5, nullable = false, unique = false)
+    private String prefix;
+
+    @Column(length = 5, nullable = false, unique = false)
+    private String series;
 
     @OneToMany(
-            mappedBy = "state",
+            mappedBy = "internalCode",
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     @JsonManagedReference
@@ -35,5 +43,4 @@ public class State {
 
     @UpdateTimestamp
     private LocalDateTime dateModification;
-
 }

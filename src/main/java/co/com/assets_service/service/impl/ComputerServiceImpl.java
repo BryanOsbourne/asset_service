@@ -1,26 +1,21 @@
 package co.com.assets_service.service.impl;
 
+import co.com.assets_service.model.*;
 import lombok.RequiredArgsConstructor;
-import co.com.assets_service.model.State;
+import jakarta.transaction.Transactional;
+import co.com.assets_service.repository.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
-import co.com.assets_service.model.Computer;
 import org.springframework.stereotype.Service;
-import co.com.assets_service.model.TypeComputer;
-import co.com.assets_service.model.Manufacturer;
 import org.springframework.data.domain.PageRequest;
 import co.com.assets_service.mapper.ComputerMapper;
 import co.com.assets_service.dto.ComputerCreateDTO;
 import co.com.assets_service.dto.ComputerUpdateDTO;
 import co.com.assets_service.dto.ComputerResponseDTO;
 import co.com.assets_service.service.ComputerService;
-import co.com.assets_service.repository.StateRepository;
 import co.com.assets_service.exception.BusinessException;
 import co.com.assets_service.exception.NoContentException;
-import co.com.assets_service.repository.ComputerRepository;
-import co.com.assets_service.repository.ManufacturerRepository;
-import co.com.assets_service.repository.TypeComputerRepository;
 
 @Service
 @RequiredArgsConstructor
@@ -29,6 +24,7 @@ public class ComputerServiceImpl implements ComputerService {
     private final ComputerMapper computerMapper;
     private final StateRepository stateRepository;
     private final ComputerRepository computerRepository;
+    private final InternalCodeRepository internalCodeRepository;
     private final TypeComputerRepository typeComputerRepository;
     private final ManufacturerRepository manufacturerRepository;
 
@@ -42,24 +38,16 @@ public class ComputerServiceImpl implements ComputerService {
     }
 
     @Override
+    @Transactional
     public ComputerResponseDTO createComputer(ComputerCreateDTO computerCreateDTO) {
 
         computerCreateDTO.setName(computerCreateDTO.getName().trim().toUpperCase());
-        computerCreateDTO.setInternalCode(computerCreateDTO.getInternalCode().trim().toUpperCase());
 
         if (computerRepository.existsByName(computerCreateDTO.getName())) {
             throw new BusinessException(
                     "Computer-Conflict-409",
                     HttpStatus.CONFLICT,
                     "Computer name already exists"
-            );
-        }
-
-        if (computerRepository.existsByInternalCode(computerCreateDTO.getInternalCode())) {
-            throw new BusinessException(
-                    "Computer-Conflict-409",
-                    HttpStatus.CONFLICT,
-                    "Internal code already exists"
             );
         }
 
@@ -87,21 +75,27 @@ public class ComputerServiceImpl implements ComputerService {
                 )
         );
 
+        InternalCode internalCode = new InternalCode();
+        internalCode.setPrefix("SF-");
+        internalCode.setSeries("000-");
+
         Computer computer = computerMapper.createDTOToEntity(computerCreateDTO);
         computer.setState(state);
         computer.setTypeComputer(typeComputer);
         computer.setManufacturer(manufacturer);
+        computer.setInternalCode(internalCodeRepository.save(internalCode));
 
-        return computerMapper.entityToResponseDTO(computerRepository.save(computer));
+        return computerMapper.entityToResponseDTO(
+                computerRepository.save(computer)
+        );
     }
 
     @Override
     public ComputerResponseDTO updateComputer(ComputerUpdateDTO computerUpdateDTO) {
 
         computerUpdateDTO.setName(computerUpdateDTO.getName().trim().toUpperCase());
-        computerUpdateDTO.setInternalCode(computerUpdateDTO.getInternalCode().trim().toUpperCase());
 
-        computerRepository.findById(computerUpdateDTO.getId())
+        Computer c = computerRepository.findById(computerUpdateDTO.getId())
                 .orElseThrow(() -> new NoContentException(
                         "Computer-Not-Found-404",
                         HttpStatus.NOT_FOUND,
@@ -115,16 +109,6 @@ public class ComputerServiceImpl implements ComputerService {
                             "Computer-Conflict-409",
                             HttpStatus.CONFLICT,
                             "Computer name already exists"
-                    );
-                });
-
-        computerRepository.findByInternalCode(computerUpdateDTO.getInternalCode())
-                .filter(existing -> !existing.getId().equals(computerUpdateDTO.getId()))
-                .ifPresent(existing -> {
-                    throw new BusinessException(
-                            "Computer-Conflict-409",
-                            HttpStatus.CONFLICT,
-                            "Internal code already exists"
                     );
                 });
 
@@ -156,6 +140,7 @@ public class ComputerServiceImpl implements ComputerService {
         computer.setState(state);
         computer.setTypeComputer(typeComputer);
         computer.setManufacturer(manufacturer);
+        computer.setInternalCode(c.getInternalCode());
 
         return computerMapper.entityToResponseDTO(
                 computerRepository.save(computer)

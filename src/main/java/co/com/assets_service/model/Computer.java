@@ -30,13 +30,15 @@ public class Computer {
     @Column(length = 50, nullable = false)
     private String model;
 
-    @Column(length = 50, nullable = false, unique = true)
-    private String internalCode;
+    @ManyToOne
+    @JoinColumn(name = "internal_code_id", nullable = false)
+    @JsonBackReference
+    private InternalCode internalCode;
 
     @ManyToOne
     @JoinColumn(name = "state_id", nullable = false)
     @JsonBackReference
-    private State State;
+    private State state;
 
     @ManyToOne
     @JoinColumn(name = "type_computer_id", nullable = false)
