@@ -39,11 +39,11 @@ public class CostCenterServiceImpl implements CostCenterService {
         }
 
         costCenterCreateDTO.setName(name);
-        CostCenter costCenter = costCenterRepository.save(
-                costCenterMapper.createDTOToEntity(costCenterCreateDTO)
+        return costCenterMapper.entityToResponseDTO(
+                costCenterRepository.save(
+                        costCenterMapper.createDTOToEntity(costCenterCreateDTO)
+                )
         );
-
-        return costCenterMapper.entityToResponseDTO(costCenter);
     }
 
     @Override
@@ -67,7 +67,6 @@ public class CostCenterServiceImpl implements CostCenterService {
                 });
 
         costCenter.setName(name);
-        CostCenter updatedCostCenter = costCenterRepository.save(costCenter);
-        return costCenterMapper.entityToResponseDTO(updatedCostCenter);
+        return costCenterMapper.entityToResponseDTO(costCenterRepository.save(costCenter));
     }
 }

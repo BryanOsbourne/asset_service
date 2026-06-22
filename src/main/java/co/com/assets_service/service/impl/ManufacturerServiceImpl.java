@@ -44,11 +44,10 @@ public class ManufacturerServiceImpl implements ManufacturerService {
         }
         manufacturerCreateDTO.setName(name);
         manufacturerCreateDTO.setIsEnabled(manufacturerCreateDTO.getIsEnabled());
-        Manufacturer manufacturer = manufacturerRepository.save(
-                manufacturerMapper.createDTOToEntity(manufacturerCreateDTO)
+        return manufacturerMapper.entityToResponseDTO(manufacturerRepository.save(
+                        manufacturerMapper.createDTOToEntity(manufacturerCreateDTO)
+                )
         );
-
-        return manufacturerMapper.entityToResponseDTO(manufacturer);
     }
 
     @Override
@@ -73,7 +72,6 @@ public class ManufacturerServiceImpl implements ManufacturerService {
 
         manufacturer.setName(name);
         manufacturer.setIsEnabled(manufacturerUpdateDTO.getIsEnable());
-        Manufacturer updatedManufacturer = manufacturerRepository.save(manufacturer);
-        return manufacturerMapper.entityToResponseDTO(updatedManufacturer);
+        return manufacturerMapper.entityToResponseDTO(manufacturerRepository.save(manufacturer));
     }
 }

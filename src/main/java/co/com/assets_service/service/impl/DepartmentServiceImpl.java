@@ -7,7 +7,6 @@ import co.com.assets_service.model.CostCenter;
 import org.springframework.stereotype.Service;
 import co.com.assets_service.model.Department;
 import co.com.assets_service.dto.DepartmentUpdateDTO;
-import co.com.assets_service.mapper.CostCenterMapper;
 import co.com.assets_service.dto.DepartmentCreateDTO;
 import co.com.assets_service.mapper.DepartmentMapper;
 import co.com.assets_service.dto.DepartmentResponseDTO;
@@ -22,7 +21,6 @@ import co.com.assets_service.repository.DepartmentRepository;
 public class DepartmentServiceImpl implements DepartmentService {
 
     private final DepartmentMapper departmentMapper;
-    private final CostCenterMapper costCenterMapper;
     private final DepartmentRepository departmentRepository;
     private final CostCenterRepository costCenterRepository;
 
@@ -46,25 +44,22 @@ public class DepartmentServiceImpl implements DepartmentService {
         }
 
         CostCenter costCenter = costCenterRepository.findById(
-                departmentCreateDTO.getCostCenter().getId()).orElseThrow(() -> new NoContentException(
+                departmentCreateDTO.getCostCenterId()).orElseThrow(() -> new NoContentException(
                 "CostCenter-Not-Found-404",
                 HttpStatus.NOT_FOUND,
                 "Cost center not found"
         ));
 
-        departmentCreateDTO.setName(name);
-        departmentCreateDTO.setCostCenter(costCenterMapper.entityToResponseDTO(costCenter));
+        Department department = new Department();
+        department.setName(name);
+        department.setCostCenter(costCenter);
 
-        Department department = departmentRepository.save(
-                departmentMapper.createDTOToEntity(departmentCreateDTO)
-        );
-
-        return departmentMapper.entityToResponseDTO(department);
+        return departmentMapper.entityToResponseDTO(departmentRepository.save(department));
     }
 
     @Override
     public DepartmentResponseDTO updateDepartment(DepartmentUpdateDTO departmentUpdateDTO) {
-        Department Department = departmentRepository.findById(departmentUpdateDTO.getId())
+        Department department = departmentRepository.findById(departmentUpdateDTO.getId())
                 .orElseThrow(() -> new NoContentException(
                         "Department-Not-Found-404",
                         HttpStatus.NOT_FOUND,
@@ -73,7 +68,7 @@ public class DepartmentServiceImpl implements DepartmentService {
 
         String name = departmentUpdateDTO.getName().trim().toUpperCase();
         departmentRepository.findByName(name)
-                .filter(existing -> !existing.getId().equals(Department.getId()))
+                .filter(existing -> !existing.getId().equals(department.getId()))
                 .ifPresent(existing -> {
                     throw new BusinessException(
                             "Department-Conflict-409",
@@ -82,8 +77,7 @@ public class DepartmentServiceImpl implements DepartmentService {
                     );
                 });
 
-        Department.setName(name);
-        Department updatedDepartment = departmentRepository.save(Department);
-        return departmentMapper.entityToResponseDTO(updatedDepartment);
+        department.setName(name);
+        return departmentMapper.entityToResponseDTO(departmentRepository.save(department));
     }
 }

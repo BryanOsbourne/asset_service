@@ -10,8 +10,8 @@ import org.springframework.http.ResponseEntity;
 import co.com.assets_service.dto.StateCreateDTO;
 import co.com.assets_service.dto.StateUpdateDTO;
 import org.springframework.web.bind.annotation.*;
+import co.com.assets_service.dto.StateResponseDTO;
 import co.com.assets_service.service.StateService;
-import co.com.assets_service.dto.StateBasicResponseDTO;
 
 @RestController
 @RequiredArgsConstructor
@@ -26,7 +26,7 @@ public class StateController {
             value = "/findAll",
             produces = "application/json"
     )
-    public ResponseEntity<List<StateBasicResponseDTO>> findAll() {
+    public ResponseEntity<List<StateResponseDTO>> findAll() {
         return new ResponseEntity<>(stateService.getAllStates(), HttpStatus.OK);
     }
 
@@ -35,7 +35,7 @@ public class StateController {
             consumes = "application/json",
             produces = "application/json"
     )
-    public ResponseEntity<StateBasicResponseDTO> createState(@Valid @RequestBody StateCreateDTO stateCreateDTO) {
+    public ResponseEntity<StateResponseDTO> createState(@Valid @RequestBody StateCreateDTO stateCreateDTO) {
         LOGGER.info("StateController - createState - stateCreateDTO: {}", stateCreateDTO);
         return new ResponseEntity<>(stateService.createState(stateCreateDTO), HttpStatus.CREATED);
     }
@@ -45,7 +45,7 @@ public class StateController {
             consumes = "application/json",
             produces = "application/json"
     )
-    public ResponseEntity<StateBasicResponseDTO> updateState(@Valid @RequestBody StateUpdateDTO stateUpdateDTO) {
+    public ResponseEntity<StateResponseDTO> updateState(@Valid @RequestBody StateUpdateDTO stateUpdateDTO) {
         LOGGER.info("StateController - updateState - stateUpdateDTO: {}", stateUpdateDTO);
         return new ResponseEntity<>(stateService.updateState(stateUpdateDTO), HttpStatus.OK);
     }
