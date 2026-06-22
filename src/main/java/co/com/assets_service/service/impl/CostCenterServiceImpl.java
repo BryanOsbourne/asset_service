@@ -29,8 +29,10 @@ public class CostCenterServiceImpl implements CostCenterService {
 
     @Override
     public CostCenterResponseDTO createCostCenter(CostCenterCreateDTO costCenterCreateDTO) {
-        String name = costCenterCreateDTO.getName().trim().toUpperCase();
-        if (costCenterRepository.existsByName(name)) {
+
+        costCenterCreateDTO.setName(costCenterCreateDTO.getName().trim().toUpperCase());
+
+        if (costCenterRepository.existsByName(costCenterCreateDTO.getName())) {
             throw new BusinessException(
                     "CostCenter-Conflict-409",
                     HttpStatus.CONFLICT,
@@ -38,7 +40,6 @@ public class CostCenterServiceImpl implements CostCenterService {
             );
         }
 
-        costCenterCreateDTO.setName(name);
         return costCenterMapper.entityToResponseDTO(
                 costCenterRepository.save(
                         costCenterMapper.createDTOToEntity(costCenterCreateDTO)
@@ -48,16 +49,18 @@ public class CostCenterServiceImpl implements CostCenterService {
 
     @Override
     public CostCenterResponseDTO updateCostCenter(CostCenterUpdateDTO costCenterUpdateDTO) {
-        CostCenter costCenter = costCenterRepository.findById(costCenterUpdateDTO.getId())
+
+        costCenterUpdateDTO.setName(costCenterUpdateDTO.getName().trim().toUpperCase());
+
+        costCenterRepository.findById(costCenterUpdateDTO.getId())
                 .orElseThrow(() -> new NoContentException(
                         "CostCenter-Not-Found-404",
                         HttpStatus.NOT_FOUND,
                         "CostCenter not found"
                 ));
 
-        String name = costCenterUpdateDTO.getName().trim().toUpperCase();
-        costCenterRepository.findByName(name)
-                .filter(existing -> !existing.getId().equals(costCenter.getId()))
+        costCenterRepository.findByName(costCenterUpdateDTO.getName())
+                .filter(existing -> !existing.getId().equals(costCenterUpdateDTO.getId()))
                 .ifPresent(existing -> {
                     throw new BusinessException(
                             "CostCenter-Conflict-409",
@@ -66,7 +69,10 @@ public class CostCenterServiceImpl implements CostCenterService {
                     );
                 });
 
-        costCenter.setName(name);
-        return costCenterMapper.entityToResponseDTO(costCenterRepository.save(costCenter));
+        return costCenterMapper.entityToResponseDTO(
+                costCenterRepository.save(
+                        costCenterMapper.updateDTOToEntity(costCenterUpdateDTO)
+                )
+        );
     }
 }

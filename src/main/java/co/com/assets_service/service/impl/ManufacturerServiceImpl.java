@@ -34,17 +34,19 @@ public class ManufacturerServiceImpl implements ManufacturerService {
 
     @Override
     public ManufacturerResponseDTO createManufacturer(ManufacturerCreateDTO manufacturerCreateDTO) {
-        String name = manufacturerCreateDTO.getName().trim().toUpperCase();
-        if (manufacturerRepository.existsByName(name)) {
+
+        manufacturerCreateDTO.setName(manufacturerCreateDTO.getName().trim().toUpperCase());
+
+        if (manufacturerRepository.existsByName(manufacturerCreateDTO.getName())) {
             throw new BusinessException(
                     "Manufacturer-Conflict-409",
                     HttpStatus.CONFLICT,
                     "Manufacturer name already exists"
             );
         }
-        manufacturerCreateDTO.setName(name);
-        manufacturerCreateDTO.setIsEnabled(manufacturerCreateDTO.getIsEnabled());
-        return manufacturerMapper.entityToResponseDTO(manufacturerRepository.save(
+
+        return manufacturerMapper.entityToResponseDTO(
+                manufacturerRepository.save(
                         manufacturerMapper.createDTOToEntity(manufacturerCreateDTO)
                 )
         );
@@ -52,7 +54,7 @@ public class ManufacturerServiceImpl implements ManufacturerService {
 
     @Override
     public ManufacturerResponseDTO updateManufacturer(ManufacturerUpdateDTO manufacturerUpdateDTO) {
-        Manufacturer manufacturer = manufacturerRepository.findById(manufacturerUpdateDTO.getId())
+        manufacturerRepository.findById(manufacturerUpdateDTO.getId())
                 .orElseThrow(() -> new NoContentException(
                         "Manufacturer-Not-Found-404",
                         HttpStatus.NOT_FOUND,
@@ -61,7 +63,7 @@ public class ManufacturerServiceImpl implements ManufacturerService {
 
         String name = manufacturerUpdateDTO.getName().trim().toUpperCase();
         manufacturerRepository.findByName(name)
-                .filter(existing -> !existing.getId().equals(manufacturer.getId()))
+                .filter(existing -> !existing.getId().equals(manufacturerUpdateDTO.getId()))
                 .ifPresent(existing -> {
                     throw new BusinessException(
                             "Manufacturer-Conflict-409",
@@ -70,8 +72,9 @@ public class ManufacturerServiceImpl implements ManufacturerService {
                     );
                 });
 
-        manufacturer.setName(name);
-        manufacturer.setIsEnabled(manufacturerUpdateDTO.getIsEnable());
+        manufacturerUpdateDTO.setName(name);
+        manufacturerUpdateDTO.setIsEnable(manufacturerUpdateDTO.getIsEnable());
+        Manufacturer manufacturer = manufacturerMapper.updateDTOToEntity(manufacturerUpdateDTO);
         return manufacturerMapper.entityToResponseDTO(manufacturerRepository.save(manufacturer));
     }
 }

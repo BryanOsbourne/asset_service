@@ -34,8 +34,10 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public DepartmentResponseDTO createDepartment(DepartmentCreateDTO departmentCreateDTO) {
-        String name = departmentCreateDTO.getName().trim().toUpperCase();
-        if (departmentRepository.existsByName(name)) {
+
+        departmentCreateDTO.setName(departmentCreateDTO.getName().trim().toUpperCase());
+
+        if (departmentRepository.existsByName(departmentCreateDTO.getName())) {
             throw new BusinessException(
                     "Department-Conflict-409",
                     HttpStatus.CONFLICT,
@@ -50,8 +52,7 @@ public class DepartmentServiceImpl implements DepartmentService {
                 "Cost center not found"
         ));
 
-        Department department = new Department();
-        department.setName(name);
+        Department department = departmentMapper.createDTOToEntity(departmentCreateDTO);
         department.setCostCenter(costCenter);
 
         return departmentMapper.entityToResponseDTO(departmentRepository.save(department));
@@ -59,16 +60,18 @@ public class DepartmentServiceImpl implements DepartmentService {
 
     @Override
     public DepartmentResponseDTO updateDepartment(DepartmentUpdateDTO departmentUpdateDTO) {
-        Department department = departmentRepository.findById(departmentUpdateDTO.getId())
+
+        departmentUpdateDTO.setName(departmentUpdateDTO.getName().trim().toUpperCase());
+
+        departmentRepository.findById(departmentUpdateDTO.getId())
                 .orElseThrow(() -> new NoContentException(
                         "Department-Not-Found-404",
                         HttpStatus.NOT_FOUND,
                         "Department not found"
                 ));
 
-        String name = departmentUpdateDTO.getName().trim().toUpperCase();
-        departmentRepository.findByName(name)
-                .filter(existing -> !existing.getId().equals(department.getId()))
+        departmentRepository.findByName(departmentUpdateDTO.getName())
+                .filter(existing -> !existing.getId().equals(departmentUpdateDTO.getId()))
                 .ifPresent(existing -> {
                     throw new BusinessException(
                             "Department-Conflict-409",
@@ -77,7 +80,10 @@ public class DepartmentServiceImpl implements DepartmentService {
                     );
                 });
 
-        department.setName(name);
-        return departmentMapper.entityToResponseDTO(departmentRepository.save(department));
+        return departmentMapper.entityToResponseDTO(
+                departmentRepository.save(
+                        departmentMapper.updateDTOToEntity(departmentUpdateDTO)
+                )
+        );
     }
 }

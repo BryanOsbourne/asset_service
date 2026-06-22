@@ -31,8 +31,10 @@ public class TypeComputerServiceImpl implements TypeComputerService {
 
     @Override
     public TypeComputerResponseDTO createTypeComputer(TypeComputerCreateDTO typeComputerCreateDTO) {
-        String name = typeComputerCreateDTO.getName().trim().toUpperCase();
-        if (typeComputerRepository.existsByName(name)) {
+
+        typeComputerCreateDTO.setName(typeComputerCreateDTO.getName().trim().toUpperCase());
+
+        if (typeComputerRepository.existsByName(typeComputerCreateDTO.getName())) {
             throw new BusinessException(
                     "TypeComputer-Conflict-409",
                     HttpStatus.CONFLICT,
@@ -40,7 +42,6 @@ public class TypeComputerServiceImpl implements TypeComputerService {
             );
         }
 
-        typeComputerCreateDTO.setName(name);
         return typeComputerMapper.entityToResponseDTO(
                 typeComputerRepository.save(
                         typeComputerMapper.createDTOToEntity(typeComputerCreateDTO)
@@ -50,16 +51,18 @@ public class TypeComputerServiceImpl implements TypeComputerService {
 
     @Override
     public TypeComputerResponseDTO updateTypeComputer(TypeComputerUpdateDTO typeComputerUpdateDTO) {
-        TypeComputer typeComputer = typeComputerRepository.findById(typeComputerUpdateDTO.getId())
+
+        typeComputerUpdateDTO.setName(typeComputerUpdateDTO.getName().trim().toUpperCase());
+
+        typeComputerRepository.findById(typeComputerUpdateDTO.getId())
                 .orElseThrow(() -> new NoContentException(
                         "TypeComputer-Not-Found-404",
                         HttpStatus.NOT_FOUND,
                         "TypeComputer not found"
                 ));
 
-        String name = typeComputerUpdateDTO.getName().trim().toUpperCase();
-        typeComputerRepository.findByName(name)
-                .filter(existing -> !existing.getId().equals(typeComputer.getId()))
+        typeComputerRepository.findByName(typeComputerUpdateDTO.getName())
+                .filter(existing -> !existing.getId().equals(typeComputerUpdateDTO.getId()))
                 .ifPresent(existing -> {
                     throw new BusinessException(
                             "TypeComputer-Conflict-409",
@@ -68,7 +71,10 @@ public class TypeComputerServiceImpl implements TypeComputerService {
                     );
                 });
 
-        typeComputer.setName(name);
-        return typeComputerMapper.entityToResponseDTO(typeComputerRepository.save(typeComputer));
+        return typeComputerMapper.entityToResponseDTO(
+                typeComputerRepository.save(
+                        typeComputerMapper.updateDTOToEntity(typeComputerUpdateDTO)
+                )
+        );
     }
 }

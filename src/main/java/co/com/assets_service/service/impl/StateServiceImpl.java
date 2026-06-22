@@ -31,15 +31,17 @@ public class StateServiceImpl implements StateService {
 
     @Override
     public StateResponseDTO createState(StateCreateDTO stateCreateDTO) {
-        String name = stateCreateDTO.getName().trim().toUpperCase();
-        if (stateRepository.existsByName(name)) {
+
+        stateCreateDTO.setName(stateCreateDTO.getName().trim().toUpperCase());
+
+        if (stateRepository.existsByName(stateCreateDTO.getName())) {
             throw new BusinessException(
                     "State-Conflict-409",
                     HttpStatus.CONFLICT,
                     "State name already exists"
             );
         }
-        stateCreateDTO.setName(name);
+
         return stateMapper.entityToResponseDTO(
                 stateRepository.save(
                         stateMapper.createDTOToEntity(stateCreateDTO)
@@ -49,16 +51,18 @@ public class StateServiceImpl implements StateService {
 
     @Override
     public StateResponseDTO updateState(StateUpdateDTO stateUpdateDTO) {
-        State state = stateRepository.findById(stateUpdateDTO.getId())
+
+        stateUpdateDTO.setName(stateUpdateDTO.getName().trim().toUpperCase());
+
+        stateRepository.findById(stateUpdateDTO.getId())
                 .orElseThrow(() -> new NoContentException(
                         "State-Not-Found-404",
                         HttpStatus.NOT_FOUND,
                         "State not found"
                 ));
 
-        String name = stateUpdateDTO.getName().trim().toUpperCase();
-        stateRepository.findByName(name)
-                .filter(existing -> !existing.getId().equals(state.getId()))
+        stateRepository.findByName(stateUpdateDTO.getName())
+                .filter(existing -> !existing.getId().equals(stateUpdateDTO.getId()))
                 .ifPresent(existing -> {
                     throw new BusinessException(
                             "State-Conflict-409",
@@ -67,7 +71,10 @@ public class StateServiceImpl implements StateService {
                     );
                 });
 
-        state.setName(name);
-        return stateMapper.entityToResponseDTO(stateRepository.save(state));
+        return stateMapper.entityToResponseDTO(
+                stateRepository.save(
+                        stateMapper.updateDTOToEntity(stateUpdateDTO)
+                )
+        );
     }
 }

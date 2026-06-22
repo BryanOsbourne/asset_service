@@ -1,0 +1,57 @@
+package co.com.assets_service.model;
+
+import lombok.Setter;
+import lombok.Getter;
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import org.hibernate.annotations.UpdateTimestamp;
+import org.hibernate.annotations.CreationTimestamp;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+@Getter
+@Setter
+@Entity
+@Table(name = "computer")
+public class Computer {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column(length = 50, nullable = false, unique = true)
+    private String name;
+
+    @Column(length = 50, nullable = false)
+    private String serialNumber;
+
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT true")
+    private Boolean isEnabled;
+
+    @Column(length = 50, nullable = false)
+    private String model;
+
+    @Column(length = 50, nullable = false, unique = true)
+    private String internalCode;
+
+    @ManyToOne
+    @JoinColumn(name = "state_id", nullable = false)
+    @JsonBackReference
+    private State State;
+
+    @ManyToOne
+    @JoinColumn(name = "type_computer_id", nullable = false)
+    @JsonBackReference
+    private TypeComputer typeComputer;
+
+    @ManyToOne
+    @JoinColumn(name = "manufacturer_id", nullable = false)
+    @JsonBackReference
+    private Manufacturer manufacturer;
+
+    @CreationTimestamp
+    @Column(updatable = false)
+    private LocalDateTime dateCreation;
+
+    @UpdateTimestamp
+    private LocalDateTime dateModification;
+}
