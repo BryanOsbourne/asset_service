@@ -72,18 +72,15 @@ public class ComputerServiceImpl implements ComputerService {
     }
 
     private Computer buildComputerForUpdate(ComputerUpdateDTO computerUpdateDTO) {
-        Computer computer = computerRepository.findById(computerUpdateDTO.getId())
+        computerRepository.findById(computerUpdateDTO.getId())
                 .orElseThrow(() -> new NoContentException(
                         "Computer-Not-Found-404",
                         HttpStatus.NOT_FOUND,
                         "Computer not found"
                 ));
         validateUniqueName(computerUpdateDTO.getName(), computerUpdateDTO.getId());
-        computer.setName(computerUpdateDTO.getName());
-        computer.setModel(computerUpdateDTO.getModel());
-        computer.setIsEnabled(computerUpdateDTO.getIsEnabled());
+        Computer computer = computerMapper.updateDTOToEntity(computerUpdateDTO);
         computer.setState(getState(computerUpdateDTO.getStateId()));
-        computer.setSerialNumber(computerUpdateDTO.getSerialNumber());
         computer.setManufacturer(getManufacturer(computerUpdateDTO.getManufacturerId()));
         computer.setTypeComputer(getTypeComputer(computerUpdateDTO.getTypeComputerId()));
         return computer;

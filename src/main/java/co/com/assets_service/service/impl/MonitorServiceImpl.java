@@ -70,18 +70,15 @@ public class MonitorServiceImpl implements MonitorService {
     }
 
     private Monitor buildMonitorForUpdate(MonitorUpdateDTO monitorUpdateDTO) {
-        Monitor monitor = monitorRepository.findById(monitorUpdateDTO.getId())
+        monitorRepository.findById(monitorUpdateDTO.getId())
                 .orElseThrow(() -> new NoContentException(
                         "Monitor-Not-Found-404",
                         HttpStatus.NOT_FOUND,
                         "Monitor not found"
                 ));
         validateUniqueName(monitorUpdateDTO.getName(), monitorUpdateDTO.getId());
-        monitor.setName(monitorUpdateDTO.getName());
-        monitor.setModel(monitorUpdateDTO.getModel());
-        monitor.setIsEnabled(monitorUpdateDTO.getIsEnabled());
+        Monitor monitor = monitorMapper.updateDTOToEntity(monitorUpdateDTO);
         monitor.setState(getState(monitorUpdateDTO.getStateId()));
-        monitor.setSerialNumber(monitorUpdateDTO.getSerialNumber());
         monitor.setManufacturer(getManufacturer(monitorUpdateDTO.getManufacturerId()));
         return monitor;
     }
