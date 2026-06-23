@@ -3,6 +3,7 @@ package co.com.assets_service.service.impl;
 import co.com.assets_service.model.*;
 import lombok.RequiredArgsConstructor;
 import jakarta.transaction.Transactional;
+import co.com.assets_service.utils.Utils;
 import co.com.assets_service.repository.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.data.domain.Page;
@@ -40,110 +41,91 @@ public class ComputerServiceImpl implements ComputerService {
     @Override
     @Transactional
     public ComputerResponseDTO createComputer(ComputerCreateDTO computerCreateDTO) {
-
-        computerCreateDTO.setName(computerCreateDTO.getName().trim().toUpperCase());
-
-        if (computerRepository.existsByName(computerCreateDTO.getName())) {
-            throw new BusinessException(
-                    "Computer-Conflict-409",
-                    HttpStatus.CONFLICT,
-                    "Computer name already exists"
-            );
-        }
-
-        Manufacturer manufacturer = manufacturerRepository.findById(computerCreateDTO.getManufacturerId()).orElseThrow(
-                () -> new NoContentException(
-                        "Manufacturer-Not-Found-404",
-                        HttpStatus.NOT_FOUND,
-                        "Manufacturer not found"
-                )
-        );
-
-        TypeComputer typeComputer = typeComputerRepository.findById(computerCreateDTO.getTypeComputerId()).orElseThrow(
-                () -> new NoContentException(
-                        "TypeComputer-Not-Found-404",
-                        HttpStatus.NOT_FOUND,
-                        "Type computer not found"
-                )
-        );
-
-        State state = stateRepository.findById(computerCreateDTO.getStateId()).orElseThrow(
-                () -> new NoContentException(
-                        "State-Not-Found-404",
-                        HttpStatus.NOT_FOUND,
-                        "State not found"
-                )
-        );
-
+        computerCreateDTO.setName(Utils.normalizeName(computerCreateDTO.getName()));
         InternalCode internalCode = new InternalCode();
         internalCode.setPrefix("SF-");
         internalCode.setSeries("000-");
-
-        Computer computer = computerMapper.createDTOToEntity(computerCreateDTO);
-        computer.setState(state);
-        computer.setTypeComputer(typeComputer);
-        computer.setManufacturer(manufacturer);
+        Computer computer = buildComputerForCreate(computerCreateDTO);
         computer.setInternalCode(internalCodeRepository.save(internalCode));
-
         return computerMapper.entityToResponseDTO(
                 computerRepository.save(computer)
         );
     }
 
     @Override
+    @Transactional
     public ComputerResponseDTO updateComputer(ComputerUpdateDTO computerUpdateDTO) {
+        computerUpdateDTO.setName(Utils.normalizeName(computerUpdateDTO.getName()));
+        Computer computer = buildComputerForUpdate(computerUpdateDTO);
+        return computerMapper.entityToResponseDTO(
+                computerRepository.save(computer)
+        );
+    }
 
-        computerUpdateDTO.setName(computerUpdateDTO.getName().trim().toUpperCase());
+    private Computer buildComputerForCreate(ComputerCreateDTO computerCreateDTO) {
+        validateUniqueName(computerCreateDTO.getName(), null);
+        Computer computer = computerMapper.createDTOToEntity(computerCreateDTO);
+        computer.setState(getState(computerCreateDTO.getStateId()));
+        computer.setManufacturer(getManufacturer(computerCreateDTO.getManufacturerId()));
+        computer.setTypeComputer(getTypeComputer(computerCreateDTO.getTypeComputerId()));
+        return computer;
+    }
 
-        Computer c = computerRepository.findById(computerUpdateDTO.getId())
+    private Computer buildComputerForUpdate(ComputerUpdateDTO computerUpdateDTO) {
+        Computer computer = computerRepository.findById(computerUpdateDTO.getId())
                 .orElseThrow(() -> new NoContentException(
                         "Computer-Not-Found-404",
                         HttpStatus.NOT_FOUND,
                         "Computer not found"
                 ));
+        validateUniqueName(computerUpdateDTO.getName(), computerUpdateDTO.getId());
+        computer.setName(computerUpdateDTO.getName());
+        computer.setModel(computerUpdateDTO.getModel());
+        computer.setIsEnabled(computerUpdateDTO.getIsEnabled());
+        computer.setState(getState(computerUpdateDTO.getStateId()));
+        computer.setSerialNumber(computerUpdateDTO.getSerialNumber());
+        computer.setManufacturer(getManufacturer(computerUpdateDTO.getManufacturerId()));
+        computer.setTypeComputer(getTypeComputer(computerUpdateDTO.getTypeComputerId()));
+        return computer;
+    }
 
-        computerRepository.findByName(computerUpdateDTO.getName())
-                .filter(existing -> !existing.getId().equals(computerUpdateDTO.getId()))
-                .ifPresent(existing -> {
+    private void validateUniqueName(String name, Long currentId) {
+        computerRepository.findByName(name)
+                .filter(c -> currentId == null || !c.getId().equals(currentId))
+                .ifPresent(c -> {
                     throw new BusinessException(
                             "Computer-Conflict-409",
                             HttpStatus.CONFLICT,
                             "Computer name already exists"
                     );
                 });
+    }
 
-        Manufacturer manufacturer = manufacturerRepository.findById(computerUpdateDTO.getManufacturerId()).orElseThrow(
-                () -> new NoContentException(
+    private Manufacturer getManufacturer(Long id) {
+        return manufacturerRepository.findById(id)
+                .orElseThrow(() -> new NoContentException(
                         "Manufacturer-Not-Found-404",
                         HttpStatus.NOT_FOUND,
                         "Manufacturer not found"
-                )
-        );
+                ));
+    }
 
-        TypeComputer typeComputer = typeComputerRepository.findById(computerUpdateDTO.getTypeComputerId()).orElseThrow(
-                () -> new NoContentException(
+    private TypeComputer getTypeComputer(Long id) {
+        return typeComputerRepository.findById(id)
+                .orElseThrow(() -> new NoContentException(
                         "TypeComputer-Not-Found-404",
                         HttpStatus.NOT_FOUND,
                         "Type computer not found"
-                )
-        );
+                ));
+    }
 
-        State state = stateRepository.findById(computerUpdateDTO.getStateId()).orElseThrow(
-                () -> new NoContentException(
+    private State getState(Long id) {
+        return stateRepository.findById(id)
+                .orElseThrow(() -> new NoContentException(
                         "State-Not-Found-404",
                         HttpStatus.NOT_FOUND,
                         "State not found"
-                )
-        );
-
-        Computer computer = computerMapper.updateDTOToEntity(computerUpdateDTO);
-        computer.setState(state);
-        computer.setTypeComputer(typeComputer);
-        computer.setManufacturer(manufacturer);
-        computer.setInternalCode(c.getInternalCode());
-
-        return computerMapper.entityToResponseDTO(
-                computerRepository.save(computer)
-        );
+                ));
     }
+
 }

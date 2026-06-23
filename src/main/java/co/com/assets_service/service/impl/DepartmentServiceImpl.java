@@ -2,6 +2,8 @@ package co.com.assets_service.service.impl;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import co.com.assets_service.utils.Utils;
+import jakarta.transaction.Transactional;
 import org.springframework.http.HttpStatus;
 import co.com.assets_service.model.CostCenter;
 import org.springframework.stereotype.Service;
@@ -33,57 +35,52 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    @Transactional
     public DepartmentResponseDTO createDepartment(DepartmentCreateDTO departmentCreateDTO) {
-
-        departmentCreateDTO.setName(departmentCreateDTO.getName().trim().toUpperCase());
-
-        if (departmentRepository.existsByName(departmentCreateDTO.getName())) {
-            throw new BusinessException(
-                    "Department-Conflict-409",
-                    HttpStatus.CONFLICT,
-                    "Department name already exists"
-            );
-        }
-
-        CostCenter costCenter = costCenterRepository.findById(
-                departmentCreateDTO.getCostCenterId()).orElseThrow(() -> new NoContentException(
-                "CostCenter-Not-Found-404",
-                HttpStatus.NOT_FOUND,
-                "Cost center not found"
-        ));
-
+        departmentCreateDTO.setName(Utils.normalizeName(departmentCreateDTO.getName()));
+        validateUniqueName(departmentCreateDTO.getName(), null);
+        CostCenter costCenter = getCostCenter(departmentCreateDTO.getCostCenterId());
         Department department = departmentMapper.createDTOToEntity(departmentCreateDTO);
         department.setCostCenter(costCenter);
-
         return departmentMapper.entityToResponseDTO(departmentRepository.save(department));
     }
 
     @Override
+    @Transactional
     public DepartmentResponseDTO updateDepartment(DepartmentUpdateDTO departmentUpdateDTO) {
-
-        departmentUpdateDTO.setName(departmentUpdateDTO.getName().trim().toUpperCase());
-
+        departmentUpdateDTO.setName(Utils.normalizeName(departmentUpdateDTO.getName()));
         departmentRepository.findById(departmentUpdateDTO.getId())
                 .orElseThrow(() -> new NoContentException(
                         "Department-Not-Found-404",
                         HttpStatus.NOT_FOUND,
                         "Department not found"
                 ));
-
-        departmentRepository.findByName(departmentUpdateDTO.getName())
-                .filter(existing -> !existing.getId().equals(departmentUpdateDTO.getId()))
-                .ifPresent(existing -> {
-                    throw new BusinessException(
-                            "Department-Conflict-409",
-                            HttpStatus.CONFLICT,
-                            "Department name already exists"
-                    );
-                });
-
+        validateUniqueName(departmentUpdateDTO.getName(), departmentUpdateDTO.getId());
         return departmentMapper.entityToResponseDTO(
                 departmentRepository.save(
                         departmentMapper.updateDTOToEntity(departmentUpdateDTO)
                 )
         );
     }
+
+    private CostCenter getCostCenter(Long id) {
+        return costCenterRepository.findById(id).orElseThrow(() -> new NoContentException(
+                "CostCenter-Not-Found-404",
+                HttpStatus.NOT_FOUND,
+                "Cost center not found"
+        ));
+    }
+
+    private void validateUniqueName(String name, Long currentId) {
+        departmentRepository.findByName(name)
+                .filter(c -> currentId == null || !c.getId().equals(currentId))
+                .ifPresent(c -> {
+                    throw new BusinessException(
+                            "Computer-Conflict-409",
+                            HttpStatus.CONFLICT,
+                            "Computer name already exists"
+                    );
+                });
+    }
+
 }

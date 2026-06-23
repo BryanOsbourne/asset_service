@@ -2,6 +2,8 @@ package co.com.assets_service.service.impl;
 
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import jakarta.transaction.Transactional;
+import co.com.assets_service.utils.Utils;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import co.com.assets_service.model.TypeComputer;
@@ -30,18 +32,10 @@ public class TypeComputerServiceImpl implements TypeComputerService {
     }
 
     @Override
+    @Transactional
     public TypeComputerResponseDTO createTypeComputer(TypeComputerCreateDTO typeComputerCreateDTO) {
-
-        typeComputerCreateDTO.setName(typeComputerCreateDTO.getName().trim().toUpperCase());
-
-        if (typeComputerRepository.existsByName(typeComputerCreateDTO.getName())) {
-            throw new BusinessException(
-                    "TypeComputer-Conflict-409",
-                    HttpStatus.CONFLICT,
-                    "TypeComputer name already exists"
-            );
-        }
-
+        typeComputerCreateDTO.setName(Utils.normalizeName(typeComputerCreateDTO.getName()));
+        validateUniqueName(typeComputerCreateDTO.getName(), null);
         return typeComputerMapper.entityToResponseDTO(
                 typeComputerRepository.save(
                         typeComputerMapper.createDTOToEntity(typeComputerCreateDTO)
@@ -50,31 +44,32 @@ public class TypeComputerServiceImpl implements TypeComputerService {
     }
 
     @Override
+    @Transactional
     public TypeComputerResponseDTO updateTypeComputer(TypeComputerUpdateDTO typeComputerUpdateDTO) {
-
-        typeComputerUpdateDTO.setName(typeComputerUpdateDTO.getName().trim().toUpperCase());
-
+        typeComputerUpdateDTO.setName(Utils.normalizeName(typeComputerUpdateDTO.getName()));
         typeComputerRepository.findById(typeComputerUpdateDTO.getId())
                 .orElseThrow(() -> new NoContentException(
                         "TypeComputer-Not-Found-404",
                         HttpStatus.NOT_FOUND,
                         "TypeComputer not found"
                 ));
-
-        typeComputerRepository.findByName(typeComputerUpdateDTO.getName())
-                .filter(existing -> !existing.getId().equals(typeComputerUpdateDTO.getId()))
-                .ifPresent(existing -> {
-                    throw new BusinessException(
-                            "TypeComputer-Conflict-409",
-                            HttpStatus.CONFLICT,
-                            "TypeComputer name already exists"
-                    );
-                });
-
+        validateUniqueName(typeComputerUpdateDTO.getName(), typeComputerUpdateDTO.getId());
         return typeComputerMapper.entityToResponseDTO(
                 typeComputerRepository.save(
                         typeComputerMapper.updateDTOToEntity(typeComputerUpdateDTO)
                 )
         );
+    }
+
+    private void validateUniqueName(String name, Long currentId) {
+        typeComputerRepository.findByName(name)
+                .filter(c -> currentId == null || !c.getId().equals(currentId))
+                .ifPresent(c -> {
+                    throw new BusinessException(
+                            "Computer-Conflict-409",
+                            HttpStatus.CONFLICT,
+                            "Computer name already exists"
+                    );
+                });
     }
 }

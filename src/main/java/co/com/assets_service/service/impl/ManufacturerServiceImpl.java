@@ -1,6 +1,8 @@
 package co.com.assets_service.service.impl;
 
 import lombok.RequiredArgsConstructor;
+import jakarta.transaction.Transactional;
+import co.com.assets_service.utils.Utils;
 import org.springframework.http.HttpStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
@@ -33,18 +35,10 @@ public class ManufacturerServiceImpl implements ManufacturerService {
     }
 
     @Override
+    @Transactional
     public ManufacturerResponseDTO createManufacturer(ManufacturerCreateDTO manufacturerCreateDTO) {
-
-        manufacturerCreateDTO.setName(manufacturerCreateDTO.getName().trim().toUpperCase());
-
-        if (manufacturerRepository.existsByName(manufacturerCreateDTO.getName())) {
-            throw new BusinessException(
-                    "Manufacturer-Conflict-409",
-                    HttpStatus.CONFLICT,
-                    "Manufacturer name already exists"
-            );
-        }
-
+        manufacturerCreateDTO.setName(Utils.normalizeName(manufacturerCreateDTO.getName()));
+        validateUniqueName(manufacturerCreateDTO.getName(), null);
         return manufacturerMapper.entityToResponseDTO(
                 manufacturerRepository.save(
                         manufacturerMapper.createDTOToEntity(manufacturerCreateDTO)
@@ -53,28 +47,32 @@ public class ManufacturerServiceImpl implements ManufacturerService {
     }
 
     @Override
+    @Transactional
     public ManufacturerResponseDTO updateManufacturer(ManufacturerUpdateDTO manufacturerUpdateDTO) {
+        manufacturerUpdateDTO.setName(Utils.normalizeName(manufacturerUpdateDTO.getName()));
         manufacturerRepository.findById(manufacturerUpdateDTO.getId())
                 .orElseThrow(() -> new NoContentException(
                         "Manufacturer-Not-Found-404",
                         HttpStatus.NOT_FOUND,
                         "Manufacturer not found"
                 ));
+        validateUniqueName(manufacturerUpdateDTO.getName(), manufacturerUpdateDTO.getId());
+        return manufacturerMapper.entityToResponseDTO(
+                manufacturerRepository.save(
+                        manufacturerMapper.updateDTOToEntity(manufacturerUpdateDTO)
+                )
+        );
+    }
 
-        String name = manufacturerUpdateDTO.getName().trim().toUpperCase();
+    private void validateUniqueName(String name, Long currentId) {
         manufacturerRepository.findByName(name)
-                .filter(existing -> !existing.getId().equals(manufacturerUpdateDTO.getId()))
-                .ifPresent(existing -> {
+                .filter(c -> currentId == null || !c.getId().equals(currentId))
+                .ifPresent(c -> {
                     throw new BusinessException(
-                            "Manufacturer-Conflict-409",
+                            "Computer-Conflict-409",
                             HttpStatus.CONFLICT,
-                            "Manufacturer name already exists"
+                            "Computer name already exists"
                     );
                 });
-
-        manufacturerUpdateDTO.setName(name);
-        manufacturerUpdateDTO.setIsEnable(manufacturerUpdateDTO.getIsEnable());
-        Manufacturer manufacturer = manufacturerMapper.updateDTOToEntity(manufacturerUpdateDTO);
-        return manufacturerMapper.entityToResponseDTO(manufacturerRepository.save(manufacturer));
     }
 }
