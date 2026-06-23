@@ -37,6 +37,13 @@ public class InternalCode {
     @JsonManagedReference
     private List<Computer> computers;
 
+    @OneToMany(
+            mappedBy = "internalCode",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    @JsonManagedReference
+    private List<Monitor> monitors;
+
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime dateCreation;

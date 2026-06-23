@@ -31,6 +31,13 @@ public class Manufacturer {
     @JsonManagedReference
     private List<Computer> computers;
 
+    @OneToMany(
+            mappedBy = "manufacturer",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    @JsonManagedReference
+    private List<Monitor> monitors;
+
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime dateCreation;

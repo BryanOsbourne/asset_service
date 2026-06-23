@@ -29,6 +29,13 @@ public class State {
     @JsonManagedReference
     private List<Computer> computers;
 
+    @OneToMany(
+            mappedBy = "state",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    @JsonManagedReference
+    private List<Monitor> monitors;
+
     @CreationTimestamp
     @Column(updatable = false)
     private LocalDateTime dateCreation;
