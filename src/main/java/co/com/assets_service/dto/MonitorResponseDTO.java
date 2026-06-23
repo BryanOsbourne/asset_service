@@ -1,11 +1,9 @@
 package co.com.assets_service.dto;
 
 import lombok.Data;
-import lombok.Builder;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Data
-@Builder
 public class MonitorResponseDTO {
     private Long id;
     private String name;

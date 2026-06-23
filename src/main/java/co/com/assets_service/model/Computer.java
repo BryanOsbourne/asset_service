@@ -2,11 +2,13 @@ package co.com.assets_service.model;
 
 import lombok.Setter;
 import lombok.Getter;
+import java.util.List;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.CreationTimestamp;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Getter
 @Setter
@@ -49,6 +51,13 @@ public class Computer {
     @JoinColumn(name = "manufacturer_id", nullable = false)
     @JsonBackReference
     private Manufacturer manufacturer;
+
+    @OneToMany(
+            mappedBy = "computer",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    @JsonManagedReference
+    private List<MaintenancePlanComputer> maintenancePlanComputers;
 
     @CreationTimestamp
     @Column(updatable = false)

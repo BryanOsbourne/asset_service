@@ -3,8 +3,8 @@ package co.com.assets_service.dto;
 import lombok.Data;
 
 @Data
-public class ManufacturerResponseDTO {
+public class MaintenancePlanResponseDTO {
     private Long id;
     private String name;
-    private Boolean isEnabled;
+    private Boolean isOpened;
 }
