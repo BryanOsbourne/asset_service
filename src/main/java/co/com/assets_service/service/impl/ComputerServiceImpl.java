@@ -25,6 +25,7 @@ public class ComputerServiceImpl implements ComputerService {
     private final ComputerMapper computerMapper;
     private final StateRepository stateRepository;
     private final ComputerRepository computerRepository;
+    private final EmployeeRepository employeeRepository;
     private final InternalCodeRepository internalCodeRepository;
     private final TypeComputerRepository typeComputerRepository;
     private final ManufacturerRepository manufacturerRepository;
@@ -34,7 +35,7 @@ public class ComputerServiceImpl implements ComputerService {
         Page<Computer> computers = computerRepository.findAll(
                 PageRequest.of(page, size, Sort.by("id").ascending()));
         if (computers.isEmpty())
-            throw new NoContentException("computers-Not-Content-204", HttpStatus.NOT_FOUND, "No Computers found");
+            throw new NoContentException("Computers-Not-Content-204", HttpStatus.NOT_FOUND, "No Computers found");
         return computers.map(computerMapper::entityToResponseDTO);
     }
 
@@ -62,25 +63,49 @@ public class ComputerServiceImpl implements ComputerService {
         );
     }
 
+    @Override
+    @Transactional
+    public ComputerResponseDTO assignEmployee(Long id, Long employeeId) {
+        Computer computer = computerRepository.findById(id)
+                .orElseThrow(() -> new NoContentException(
+                        "Computer-Not-Found-404",
+                        HttpStatus.NOT_FOUND,
+                        "Computer not found"
+                ));
+
+        if (!computer.getIsEnabled())
+            throw new BusinessException("Computer-Not-Enabled-400", HttpStatus.BAD_REQUEST, "Computer not enabled");
+
+        computer.setEmployee(getEmployee(employeeId));
+
+        return computerMapper.entityToResponseDTO(
+                computerRepository.save(computer)
+        );
+    }
+
     private Computer buildComputerForCreate(ComputerCreateDTO computerCreateDTO) {
         validateUniqueName(computerCreateDTO.getName(), null);
         Computer computer = computerMapper.createDTOToEntity(computerCreateDTO);
         computer.setState(getState(computerCreateDTO.getStateId()));
+        computer.setEmployee(getEmployee(computerCreateDTO.getEmployeeId()));
         computer.setManufacturer(getManufacturer(computerCreateDTO.getManufacturerId()));
         computer.setTypeComputer(getTypeComputer(computerCreateDTO.getTypeComputerId()));
         return computer;
     }
 
     private Computer buildComputerForUpdate(ComputerUpdateDTO computerUpdateDTO) {
-        computerRepository.findById(computerUpdateDTO.getId())
+        Computer computer = computerRepository.findById(computerUpdateDTO.getId())
                 .orElseThrow(() -> new NoContentException(
                         "Computer-Not-Found-404",
                         HttpStatus.NOT_FOUND,
                         "Computer not found"
                 ));
         validateUniqueName(computerUpdateDTO.getName(), computerUpdateDTO.getId());
-        Computer computer = computerMapper.updateDTOToEntity(computerUpdateDTO);
+        computer.setName(computerUpdateDTO.getName());
+        computer.setModel(computerUpdateDTO.getModel());
+        computer.setIsEnabled(computerUpdateDTO.getIsEnabled());
         computer.setState(getState(computerUpdateDTO.getStateId()));
+        computer.setSerialNumber(computerUpdateDTO.getSerialNumber());
         computer.setManufacturer(getManufacturer(computerUpdateDTO.getManufacturerId()));
         computer.setTypeComputer(getTypeComputer(computerUpdateDTO.getTypeComputerId()));
         return computer;
@@ -122,6 +147,15 @@ public class ComputerServiceImpl implements ComputerService {
                         "State-Not-Found-404",
                         HttpStatus.NOT_FOUND,
                         "State not found"
+                ));
+    }
+
+    private Employee getEmployee(Long id) {
+        return employeeRepository.findById(id)
+                .orElseThrow(() -> new NoContentException(
+                        "Employee-Not-Found-404",
+                        HttpStatus.NOT_FOUND,
+                        "Employee not found"
                 ));
     }
 

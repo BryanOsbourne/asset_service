@@ -53,4 +53,13 @@ public class ComputerController {
         return new ResponseEntity<>(computerService.updateComputer(computerUpdateDTO), HttpStatus.OK);
     }
 
+    @PatchMapping(
+            value = "/assign",
+            params = {"id","employeeId"}
+    )
+    public ResponseEntity<ComputerResponseDTO> assignEmployee(@RequestParam Long id, @RequestParam Long employeeId) {
+        LOGGER.info("ComputerController - assignEmployee - id: {}, employeeId: {}", id, employeeId);
+        return new ResponseEntity<>(computerService.assignEmployee(id, employeeId), HttpStatus.OK);
+    }
+
 }

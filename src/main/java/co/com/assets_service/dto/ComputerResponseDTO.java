@@ -18,4 +18,6 @@ public class ComputerResponseDTO {
     private ManufacturerResponseDTO manufacturerResponseDTO;
     @JsonProperty("internalCode")
     private InternalCodeResponseDTO internalCodeResponseDTO;
+    @JsonProperty("employee")
+    private EmployeeResponseDTO employeeResponseDTO;
 }

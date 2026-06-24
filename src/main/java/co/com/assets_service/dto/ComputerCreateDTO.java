@@ -8,27 +8,31 @@ import jakarta.validation.constraints.Positive;
 @Data
 public class ComputerCreateDTO {
 
-    @NotBlank(message = "Name is required")
+    @NotBlank(message = "The fields is required")
     private String name;
 
-    @NotBlank(message = "serialNumber is required")
+    @NotBlank(message = "The fields is required")
     private String serialNumber;
 
-    @NotNull(message = "isEnabled is required")
+    @NotNull(message = "The fields is required")
     private Boolean isEnabled;
 
-    @NotBlank(message = "model is required")
+    @NotBlank(message = "The fields is required")
     private String model;
 
-    @Positive(message = "state center is required")
-    @NotNull(message = "state center is required")
+    @Positive(message = "The fields is required")
+    @NotNull(message = "The fields is required")
     private Long stateId;
 
-    @Positive(message = "type computer is required")
-    @NotNull(message = "type computer is required")
+    @Positive(message = "The fields is required")
+    @NotNull(message = "The fields is required")
     private Long typeComputerId;
 
-    @Positive(message = "type computer is required")
-    @NotNull(message = "type computer is required")
+    @Positive(message = "The fields is required")
+    @NotNull(message = "The fields is required")
     private Long manufacturerId;
+
+    @Positive(message = "The fields is required")
+    @NotNull(message = "The fields is required")
+    private Long employeeId;
 }
