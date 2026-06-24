@@ -6,28 +6,36 @@ import java.util.List;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import org.hibernate.annotations.UpdateTimestamp;
+import co.com.assets_service.enums.MaintenanceType;
 import org.hibernate.annotations.CreationTimestamp;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Setter
 @Getter
 @Entity
-@Table(name = "typeComputer")
-public class TypeComputer {
+@Table(name = "maintenanceComputer")
+public class MaintenanceComputer {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(length = 20, nullable = false, unique = true)
-    private String name;
+    @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
+    private MaintenanceType type;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "maintenance_plan_computer_id", nullable = false)
+    @JsonBackReference
+    private MaintenancePlanComputer maintenancePlanComputer;
 
     @OneToMany(
-            mappedBy = "typeComputer",
+            mappedBy = "maintenanceComputer",
             cascade = CascadeType.ALL,
             orphanRemoval = true)
     @JsonManagedReference
-    private List<Computer> computers;
+    private List<MaintenanceActivity> maintenanceActivities;
 
     @CreationTimestamp
     @Column(updatable = false)
@@ -35,5 +43,4 @@ public class TypeComputer {
 
     @UpdateTimestamp
     private LocalDateTime dateModification;
-
 }

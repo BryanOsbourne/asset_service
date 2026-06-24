@@ -42,7 +42,9 @@ public class DepartmentServiceImpl implements DepartmentService {
         CostCenter costCenter = getCostCenter(departmentCreateDTO.getCostCenterId());
         Department department = departmentMapper.createDTOToEntity(departmentCreateDTO);
         department.setCostCenter(costCenter);
-        return departmentMapper.entityToResponseDTO(departmentRepository.save(department));
+        return departmentMapper.entityToResponseDTO(
+                departmentRepository.save(department)
+        );
     }
 
     @Override

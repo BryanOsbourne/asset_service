@@ -1,5 +1,6 @@
 package co.com.assets_service.service.impl;
 
+import java.time.LocalDateTime;
 import co.com.assets_service.model.*;
 import lombok.RequiredArgsConstructor;
 import jakarta.transaction.Transactional;
@@ -25,6 +26,7 @@ public class MaintenancePlanComputerServiceImpl implements MaintenancePlanComput
     private final ComputerRepository computerRepository;
     private final MaintenancePlanRepository maintenancePlanRepository;
     private final MaintenancePlanComputerMapper maintenancePlanComputerMapper;
+    private final MaintenanceComputerRepository maintenanceComputerRepository;
     private final MaintenancePlanComputerRepository maintenancePlanComputerRepository;
 
     @Override
@@ -47,6 +49,12 @@ public class MaintenancePlanComputerServiceImpl implements MaintenancePlanComput
                 maintenancePlanComputerCreateDTO.getMaintenancePlanId()
         ).orElse(null);
 
+        if (!maintenancePlan.getIsOpened())
+            throw new BusinessException("MaintenancePlan-Not-Opened-409", HttpStatus.CONFLICT, "MaintenancePlan not opened");
+
+        if (!computer.getIsEnabled())
+            throw new BusinessException("Computer-Not-Enabled-409", HttpStatus.CONFLICT, "Computer not enabled");
+
         if (maintenancePlanComputer != null)
             throw new BusinessException("MaintenancePlanComputer-Already-Exists-409", HttpStatus.CONFLICT, "MaintenancePlanComputer already exists");
 
@@ -68,6 +76,10 @@ public class MaintenancePlanComputerServiceImpl implements MaintenancePlanComput
                         HttpStatus.NOT_FOUND,
                         "MaintenancePlanComputer not found"
                 ));
+
+        if (!maintenancePlanComputer.getMaintenancePlan().getIsOpened())
+            throw new BusinessException("MaintenancePlan-Not-Opened-409", HttpStatus.CONFLICT, "MaintenancePlan not opened");
+
         maintenancePlanComputer.setDatePlanning(maintenancePlanComputerUpdateDTO.getDatePlanning());
         return maintenancePlanComputerMapper.entityToResponseDTO(
                 maintenancePlanComputerRepository.save(maintenancePlanComputer));
@@ -75,13 +87,75 @@ public class MaintenancePlanComputerServiceImpl implements MaintenancePlanComput
 
     @Override
     public void delete(Long id) {
-        maintenancePlanComputerRepository.findById(id)
+        MaintenancePlanComputer maintenancePlanComputer = maintenancePlanComputerRepository.findById(id)
                 .orElseThrow(() -> new NoContentException(
                         "MaintenancePlanComputer-Not-Found-404",
                         HttpStatus.NOT_FOUND,
                         "MaintenancePlanComputer not found"
                 ));
+
+        if (!maintenancePlanComputer.getMaintenancePlan().getIsOpened())
+            throw new BusinessException("MaintenancePlan-Not-Opened-409", HttpStatus.CONFLICT, "MaintenancePlan not opened");
+
         maintenancePlanComputerRepository.deleteById(id);
+    }
+
+    @Override
+    public MaintenancePlanComputerResponseDTO completed(Long id) {
+        MaintenancePlanComputer maintenancePlanComputer = maintenancePlanComputerRepository.findById(id)
+                .orElseThrow(() -> new NoContentException(
+                        "MaintenancePlanComputer-Not-Found-404",
+                        HttpStatus.NOT_FOUND,
+                        "MaintenancePlanComputer not found"
+                ));
+
+        if (!maintenancePlanComputer.getMaintenancePlan().getIsOpened())
+            throw new BusinessException("MaintenancePlan-Not-Opened-409", HttpStatus.CONFLICT, "MaintenancePlan not opened");
+
+        if (maintenancePlanComputer.getState() == MaintenancePlanningState.COMPLETED)
+            throw new BusinessException("MaintenancePlanComputer-Completed-400", HttpStatus.BAD_REQUEST, "MaintenancePlanComputer is completed");
+
+        MaintenanceComputer maintenanceComputer = maintenanceComputerRepository.findByMaintenancePlanComputerId(
+                maintenancePlanComputer.getId()).orElseThrow(() -> new NoContentException(
+                "MaintenanceComputer-Not-Found-404",
+                HttpStatus.NOT_FOUND,
+                "MaintenanceComputer not found"
+        ));
+
+        if (maintenanceComputer.getMaintenanceActivities().isEmpty())
+            throw new BusinessException("No-MaintenanceActivities-400", HttpStatus.BAD_REQUEST, "No MaintenanceActivities found");
+
+        maintenancePlanComputer.setDateExecuted(LocalDateTime.now());
+        maintenancePlanComputer.setState(MaintenancePlanningState.COMPLETED);
+        return maintenancePlanComputerMapper.entityToResponseDTO(
+                maintenancePlanComputerRepository.save(maintenancePlanComputer)
+        );
+    }
+
+    @Override
+    public MaintenancePlanComputerResponseDTO reprogram(Long id, LocalDateTime datePlanning) {
+        MaintenancePlanComputer maintenancePlanComputer = maintenancePlanComputerRepository.findById(id)
+                .orElseThrow(() -> new NoContentException(
+                        "MaintenancePlanComputer-Not-Found-404",
+                        HttpStatus.NOT_FOUND,
+                        "MaintenancePlanComputer not found"
+                ));
+
+        if (!maintenancePlanComputer.getMaintenancePlan().getIsOpened())
+            throw new BusinessException("MaintenancePlan-Not-Opened-409", HttpStatus.CONFLICT, "MaintenancePlan not opened");
+
+        if (maintenancePlanComputer.getState() == MaintenancePlanningState.COMPLETED)
+            throw new BusinessException("MaintenancePlanComputer-Completed-400", HttpStatus.BAD_REQUEST, "MaintenancePlanComputer is completed");
+
+        if (maintenancePlanComputer.getState() == MaintenancePlanningState.IN_PROGRESS) {
+            throw new BusinessException("MaintenancePlanComputer-In-Progress-400", HttpStatus.BAD_REQUEST, "MaintenancePlanComputer is in progress");
+        }
+
+        maintenancePlanComputer.setDatePlanning(datePlanning);
+        maintenancePlanComputer.setState(MaintenancePlanningState.REPROGRAMMED);
+        return maintenancePlanComputerMapper.entityToResponseDTO(
+                maintenancePlanComputerRepository.save(maintenancePlanComputer)
+        );
     }
 
     private Computer getComputer(Long id) {

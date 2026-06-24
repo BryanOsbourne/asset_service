@@ -53,4 +53,13 @@ public class MaintenancePlanController {
         return new ResponseEntity<>(maintenancePlanService.updateMaintenancePlan(maintenancePlanUpdateDTO), HttpStatus.OK);
     }
 
+    @PatchMapping(
+            value = "/complete",
+            params = {"id"}
+    )
+    public ResponseEntity<MaintenancePlanResponseDTO> completedMaintenancePlan(@RequestParam Long id) {
+        LOGGER.info("MaintenancePlanComputerController - completedMaintenancePlan - id: {}", id);
+        return new ResponseEntity<>(maintenancePlanService.close(id), HttpStatus.OK);
+    }
+
 }

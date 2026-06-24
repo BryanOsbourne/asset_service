@@ -1,5 +1,6 @@
 package co.com.assets_service.service.impl;
 
+import java.time.LocalDateTime;
 import co.com.assets_service.model.*;
 import lombok.RequiredArgsConstructor;
 import co.com.assets_service.repository.*;
@@ -61,6 +62,29 @@ public class MaintenancePlanServiceImpl implements MaintenancePlanService {
                 maintenancePlanRepository.save(
                         maintenancePlanMapper.updateDTOToEntity(maintenancePlanUpdateDTO)
                 )
+        );
+    }
+
+    @Override
+    public MaintenancePlanResponseDTO close(Long id) {
+        MaintenancePlan maintenancePlan = maintenancePlanRepository.findById(id)
+                .orElseThrow(() -> new NoContentException(
+                        "MaintenancePlan-Not-Found-404",
+                        HttpStatus.NOT_FOUND,
+                        "MaintenancePlan not found"
+                ));
+
+        if (!maintenancePlan.getIsOpened())
+            throw new BusinessException(
+                    "MaintenancePlan-Already-Closed-409",
+                    HttpStatus.CONFLICT,
+                    "MaintenancePlan already closed"
+            );
+
+        maintenancePlan.setIsOpened(true);
+        maintenancePlan.setDateClosed(LocalDateTime.now());
+        return maintenancePlanMapper.entityToResponseDTO(
+                maintenancePlanRepository.save(maintenancePlan)
         );
     }
 

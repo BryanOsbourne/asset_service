@@ -12,7 +12,7 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @Setter
 @Getter
 @Entity
-@Table(name = "maintenance_plan")
+@Table(name = "maintenancePlan")
 public class MaintenancePlan {
 
     @Id
@@ -31,6 +31,8 @@ public class MaintenancePlan {
             orphanRemoval = true)
     @JsonManagedReference
     private List<MaintenancePlanComputer> maintenancePlanComputers;
+
+    private LocalDateTime dateClosed;
 
     @CreationTimestamp
     @Column(updatable = false)

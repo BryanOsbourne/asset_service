@@ -13,7 +13,7 @@ import org.hibernate.annotations.CreationTimestamp;
 @Table(
         name = "employee",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"name", "lastName", "secondLastName"})
+                @UniqueConstraint(columnNames = {"name", "lastName", "secondLastName"} )
         }
 )
 public class Employee {

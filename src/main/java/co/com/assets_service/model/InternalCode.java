@@ -13,9 +13,10 @@ import com.fasterxml.jackson.annotation.JsonManagedReference;
 @Getter
 @Entity
 @Table(
-        name = "internal_code",
+        name = "internalCode",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = {"prefix, series, id"}),
+                @UniqueConstraint(
+                        columnNames = {"prefix", "series", "id"})
         }
 )
 public class InternalCode {

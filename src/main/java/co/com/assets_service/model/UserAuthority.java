@@ -11,10 +11,9 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 @Setter
 @Entity
 @Table(
-        name = "user_authority",
+        name = "userAuthority",
         uniqueConstraints = {
                 @UniqueConstraint(
-                        name = "unique_user_user_authority",
                         columnNames = {"user_id", "authority_id"}
                 )
         }

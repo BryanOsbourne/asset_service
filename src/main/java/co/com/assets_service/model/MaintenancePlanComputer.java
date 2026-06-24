@@ -2,18 +2,20 @@ package co.com.assets_service.model;
 
 import lombok.Getter;
 import lombok.Setter;
+import java.util.List;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.hibernate.annotations.CreationTimestamp;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import co.com.assets_service.enums.MaintenancePlanningState;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 @Getter
 @Setter
 @Entity
 @Table(
-        name = "maintenance_plan_computer",
+        name = "maintenancePlanComputer",
         uniqueConstraints = {
                 @UniqueConstraint(
                         columnNames = {"computer_id", "maintenance_plan_id"}
@@ -44,6 +46,13 @@ public class MaintenancePlanComputer {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private MaintenancePlanningState state;
+
+    @OneToMany(
+            mappedBy = "maintenancePlanComputer",
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    @JsonManagedReference
+    private List<MaintenanceComputer> maintenanceComputers;
 
     @CreationTimestamp
     @Column(updatable = false)

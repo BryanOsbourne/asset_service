@@ -1,6 +1,7 @@
 package co.com.assets_service.controller;
 
 import org.slf4j.Logger;
+import java.time.LocalDateTime;
 import org.slf4j.LoggerFactory;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -63,6 +64,24 @@ public class MaintenancePlanComputerController {
         LOGGER.info("MaintenancePlanComputerController - deleteMaintenancePlanComputer - id: {}", id);
         maintenancePlanComputerService.delete(id);
         return new ResponseEntity<>("Registry deleted successfully", HttpStatus.OK);
+    }
+
+    @PatchMapping(
+            value = "/reprogram",
+            params = {"id", "datePlanning"}
+    )
+    public ResponseEntity<MaintenancePlanComputerResponseDTO> reprogramMaintenancePlanComputer(@RequestParam Long id, @RequestParam LocalDateTime datePlanning) {
+        LOGGER.info("MaintenancePlanComputerController - reprogramMaintenancePlanComputer - id: {}, datePlanning: {}", id, datePlanning);
+        return new ResponseEntity<>(maintenancePlanComputerService.reprogram(id, datePlanning), HttpStatus.OK);
+    }
+
+    @PatchMapping(
+            value = "/complete",
+            params = {"id"}
+    )
+    public ResponseEntity<MaintenancePlanComputerResponseDTO> completedMaintenancePlanComputer(@RequestParam Long id) {
+        LOGGER.info("MaintenancePlanComputerController - completedMaintenancePlanComputer - id: {}", id);
+        return new ResponseEntity<>(maintenancePlanComputerService.completed(id), HttpStatus.OK);
     }
 
 }
