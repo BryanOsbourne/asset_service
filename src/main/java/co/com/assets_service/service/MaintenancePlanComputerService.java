@@ -8,6 +8,7 @@ import co.com.assets_service.dto.MaintenancePlanComputerResponseDTO;
 
 public interface MaintenancePlanComputerService {
     void delete(Long id);
+    MaintenancePlanComputerResponseDTO findById(Long id);
     MaintenancePlanComputerResponseDTO completed(Long id);
     MaintenancePlanComputerResponseDTO reprogram(Long id, LocalDateTime datePlanning);
     Page<MaintenancePlanComputerResponseDTO> findAllByMaintenancePlanId(int page, int size, Long userId);
