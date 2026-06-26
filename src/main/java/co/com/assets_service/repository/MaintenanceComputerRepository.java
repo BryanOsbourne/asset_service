@@ -9,6 +9,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 @Repository
 public interface MaintenanceComputerRepository extends JpaRepository<MaintenanceComputer, Long> {
-    Page<MaintenanceComputer> findAllByMaintenancePlanComputerId(Long maintenancePlanComputerId, Pageable pageable);
     Optional<MaintenanceComputer> findByMaintenancePlanComputerId(Long maintenancePlanId);
+    Page<MaintenanceComputer> findAllByMaintenancePlanComputerId(Long maintenancePlanComputerId, Pageable pageable);
 }

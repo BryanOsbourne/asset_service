@@ -35,6 +35,15 @@ public class MaintenanceComputerController {
         return new ResponseEntity<>(maintenanceComputerService.findAllMaintenancesByMaintenancePlanComputerId(page, size, maintenancePlanComputerId), HttpStatus.OK);
     }
 
+    @GetMapping(
+            value = "/findByMaintenancePlanComputerId",
+            params = {"maintenancePlanComputerId"}
+    )
+    public ResponseEntity<MaintenanceComputerResponseDTO> findByMaintenancePlanComputerId(@Valid @RequestBody Long maintenancePlanComputerId) {
+        LOGGER.info("MaintenanceController - findByMaintenancePlanComputerId - maintenancePlanComputerId: {}", maintenancePlanComputerId);
+        return new ResponseEntity<>(maintenanceComputerService.findByMaintenancePlanComputerId(maintenancePlanComputerId), HttpStatus.OK);
+    }
+
     @PostMapping(
             value = "/create",
             consumes = "application/json",
