@@ -39,7 +39,7 @@ public class MaintenanceComputerController {
             value = "/findById",
             params = {"id"}
     )
-    public ResponseEntity<MaintenanceComputerResponseDTO> findById(@Valid @RequestBody Long id) {
+    public ResponseEntity<MaintenanceComputerResponseDTO> findById(@RequestParam Long id) {
         LOGGER.info("MaintenanceController - findById - id: {}", id);
         return new ResponseEntity<>(maintenanceComputerService.findById(id), HttpStatus.OK);
     }
@@ -48,7 +48,7 @@ public class MaintenanceComputerController {
             value = "/findByMaintenancePlanComputerId",
             params = {"maintenancePlanComputerId"}
     )
-    public ResponseEntity<MaintenanceComputerResponseDTO> findByMaintenancePlanComputerId(@Valid @RequestBody Long maintenancePlanComputerId) {
+    public ResponseEntity<MaintenanceComputerResponseDTO> findByMaintenancePlanComputerId(@RequestParam Long maintenancePlanComputerId) {
         LOGGER.info("MaintenanceController - findByMaintenancePlanComputerId - maintenancePlanComputerId: {}", maintenancePlanComputerId);
         return new ResponseEntity<>(maintenanceComputerService.findByMaintenancePlanComputerId(maintenancePlanComputerId), HttpStatus.OK);
     }
