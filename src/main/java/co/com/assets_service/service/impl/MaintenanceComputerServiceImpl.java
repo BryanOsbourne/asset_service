@@ -37,6 +37,18 @@ public class MaintenanceComputerServiceImpl implements MaintenanceComputerServic
     }
 
     @Override
+    public MaintenanceComputerResponseDTO findById(Long id) {
+        MaintenanceComputer maintenanceComputer = maintenanceComputerRepository.findById(id).orElseThrow(
+                () -> new NoContentException(
+                        "MaintenancePlanComputer-Not-Found-404",
+                        HttpStatus.NOT_FOUND,
+                        "MaintenancePlanComputer not found"
+                )
+        );
+        return maintenanceComputerMapper.entityToResponseDTO(maintenanceComputer);
+    }
+
+    @Override
     public MaintenanceComputerResponseDTO findByMaintenancePlanComputerId(Long maintenancePlanComputerId) {
         MaintenanceComputer maintenanceComputer = maintenanceComputerRepository.findByMaintenancePlanComputerId(maintenancePlanComputerId).orElseThrow(
                 () -> new NoContentException(

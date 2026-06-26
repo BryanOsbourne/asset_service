@@ -4,6 +4,7 @@ import co.com.assets_service.dto.*;
 import org.springframework.data.domain.Page;
 
 public interface MaintenanceComputerService {
+    MaintenanceComputerResponseDTO findById(Long id);
     MaintenanceComputerResponseDTO findByMaintenancePlanComputerId(Long maintenancePlanComputerId);
     MaintenanceComputerResponseDTO create(MaintenanceComputerCreateDTO maintenanceComputerCreateDTO);
     MaintenanceComputerResponseDTO update(MaintenanceComputerUpdateDTO maintenanceComputerUpdateDTO);

@@ -36,6 +36,15 @@ public class MaintenanceComputerController {
     }
 
     @GetMapping(
+            value = "/findById",
+            params = {"id"}
+    )
+    public ResponseEntity<MaintenanceComputerResponseDTO> findById(@Valid @RequestBody Long id) {
+        LOGGER.info("MaintenanceController - findById - id: {}", id);
+        return new ResponseEntity<>(maintenanceComputerService.findById(id), HttpStatus.OK);
+    }
+
+    @GetMapping(
             value = "/findByMaintenancePlanComputerId",
             params = {"maintenancePlanComputerId"}
     )
