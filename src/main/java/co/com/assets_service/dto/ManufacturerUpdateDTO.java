@@ -13,5 +13,5 @@ public class ManufacturerUpdateDTO {
     @NotBlank(message = "The field is required")
     private String name;
     @NotNull(message = "The field is required")
-    private Boolean isEnable;
+    private Boolean isEnabled;
 }
