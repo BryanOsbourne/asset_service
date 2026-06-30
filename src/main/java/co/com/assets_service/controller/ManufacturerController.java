@@ -35,6 +35,16 @@ public class ManufacturerController {
         return new ResponseEntity<>(manufacturerService.getAllManufacturers(page, size), HttpStatus.OK);
     }
 
+    @GetMapping(
+            value = "/findById",
+            params = {"id"},
+            produces = "application/json"
+    )
+    public ResponseEntity<ManufacturerResponseDTO> findById(@RequestParam Long id) {
+        LOGGER.info("ManufacturerController - findById - id: {}", id);
+        return new ResponseEntity<>(manufacturerService.findById(id), HttpStatus.OK);
+    }
+
     @PostMapping(
             value = "/create",
             consumes = "application/json",

@@ -26,6 +26,18 @@ public class ManufacturerServiceImpl implements ManufacturerService {
     private final ManufacturerRepository manufacturerRepository;
 
     @Override
+    public ManufacturerResponseDTO findById(Long id) {
+        Manufacturer manufacturer = manufacturerRepository.findById(id).orElseThrow(
+                () -> new NoContentException(
+                        "Manufacturer-Not-Found-404",
+                        HttpStatus.NOT_FOUND,
+                        "Manufacturer not found"
+                )
+        );
+        return manufacturerMapper.entityToResponseDTO(manufacturer);
+    }
+
+    @Override
     public Page<ManufacturerResponseDTO> getAllManufacturers(int page, int size) {
         Page<Manufacturer> manufacturers = manufacturerRepository.findAll(
                 PageRequest.of(page, size, Sort.by("id").ascending()));
