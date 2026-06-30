@@ -31,6 +31,17 @@ public class ComputerServiceImpl implements ComputerService {
     private final ManufacturerRepository manufacturerRepository;
 
     @Override
+    public ComputerResponseDTO findById(Long id) {
+        Computer computer = computerRepository.findById(id).orElseThrow(
+                () -> new NoContentException(
+                        "Computer-Not-Found-404",
+                        HttpStatus.NOT_FOUND,
+                        "Computer not found")
+        );
+        return computerMapper.entityToResponseDTO(computer);
+    }
+
+    @Override
     public Page<ComputerResponseDTO> findAll(int page, int size) {
         Page<Computer> computers = computerRepository.findAll(
                 PageRequest.of(page, size, Sort.by("id").ascending()));

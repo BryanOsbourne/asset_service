@@ -33,6 +33,14 @@ public class ComputerController {
         return new ResponseEntity<>(computerService.findAll(page, size), HttpStatus.OK);
     }
 
+    @GetMapping(
+            value = "/findById",
+            params = {"id"}
+    )
+    public ResponseEntity<ComputerResponseDTO> findById(@RequestParam Long id) {
+        return new ResponseEntity<>(computerService.findById(id), HttpStatus.OK);
+    }
+
     @PostMapping(
             value = "/create",
             consumes = "application/json",
