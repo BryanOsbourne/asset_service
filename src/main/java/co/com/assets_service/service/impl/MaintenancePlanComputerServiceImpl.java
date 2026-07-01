@@ -180,6 +180,16 @@ public class MaintenancePlanComputerServiceImpl implements MaintenancePlanComput
         );
     }
 
+    @Override
+    public Page<MaintenancePlanComputerResponseDTO> findAllByState(int page, int size, MaintenancePlanningState maintenancePlanningState) {
+        Page<MaintenancePlanComputer> maintenancePlanComputers = maintenancePlanComputerRepository.findAllByState(
+                maintenancePlanningState,
+                PageRequest.of(page, size, Sort.by("id").ascending()));
+        if (maintenancePlanComputers.isEmpty())
+            throw new NoContentException("MaintenancePlanComputers-Not-Content-204", HttpStatus.NOT_FOUND, "No MaintenancePlanComputers found");
+        return maintenancePlanComputers.map(maintenancePlanComputerMapper::entityToResponseDTO);
+    }
+
     private Computer getComputer(Long id) {
         return computerRepository.findById(id)
                 .orElseThrow(() -> new NoContentException(

@@ -1,6 +1,8 @@
 package co.com.assets_service.service;
 
 import java.time.LocalDateTime;
+
+import co.com.assets_service.enums.MaintenancePlanningState;
 import org.springframework.data.domain.Page;
 import co.com.assets_service.dto.MaintenancePlanComputerCreateDTO;
 import co.com.assets_service.dto.MaintenancePlanComputerUpdateDTO;
@@ -15,4 +17,5 @@ public interface MaintenancePlanComputerService {
     Page<MaintenancePlanComputerResponseDTO> findAllByMaintenancePlanId(int page, int size, Long userId);
     MaintenancePlanComputerResponseDTO create(MaintenancePlanComputerCreateDTO maintenancePlanComputerCreateDTO);
     MaintenancePlanComputerResponseDTO update(MaintenancePlanComputerUpdateDTO maintenancePlanComputerUpdateDTO);
+    Page<MaintenancePlanComputerResponseDTO> findAllByState(int page, int size, MaintenancePlanningState maintenancePlanningState);
 }

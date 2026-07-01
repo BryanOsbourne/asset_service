@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import co.com.assets_service.enums.MaintenancePlanningState;
 import co.com.assets_service.dto.MaintenancePlanComputerCreateDTO;
 import co.com.assets_service.dto.MaintenancePlanComputerUpdateDTO;
 import co.com.assets_service.dto.MaintenancePlanComputerResponseDTO;
@@ -34,6 +35,19 @@ public class MaintenancePlanComputerController {
     ) {
         LOGGER.info("MaintenancePlanComputerController - findAllByMaintenancePlanId - page: {}, size: {}, userId: {}", page, size, maintenancePlanId);
         return new ResponseEntity<>(maintenancePlanComputerService.findAllByMaintenancePlanId(page, size, maintenancePlanId), HttpStatus.OK);
+    }
+
+    @GetMapping(
+            value = "/findAll",
+            params = {"page", "size", "state"}
+    )
+    public ResponseEntity<Page<MaintenancePlanComputerResponseDTO>> findAllByState(
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam MaintenancePlanningState maintenancePlanningState
+    ) {
+        LOGGER.info("MaintenancePlanComputerController - findAllByState - page: {}, size: {}, maintenancePlanningState: {}", page, size, maintenancePlanningState);
+        return new ResponseEntity<>(maintenancePlanComputerService.findAllByState(page, size, maintenancePlanningState), HttpStatus.OK);
     }
 
     @GetMapping(
