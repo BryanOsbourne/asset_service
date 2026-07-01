@@ -86,6 +86,16 @@ public class MaintenancePlanComputerServiceImpl implements MaintenancePlanComput
     }
 
     @Override
+    public Page<MaintenancePlanComputerResponseDTO> findAllByComputerId(int page, int size, Long computerId) {
+        Page<MaintenancePlanComputer> maintenancePlanComputers = maintenancePlanComputerRepository.findAllByComputerId(
+                computerId,
+                PageRequest.of(page, size, Sort.by("id").ascending()));
+        if (maintenancePlanComputers.isEmpty())
+            throw new NoContentException("MaintenancePlanComputers-Not-Content-204", HttpStatus.NOT_FOUND, "No MaintenancePlanComputers found");
+        return maintenancePlanComputers.map(maintenancePlanComputerMapper::entityToResponseDTO);
+    }
+
+    @Override
     public void delete(Long id) {
         MaintenancePlanComputer maintenancePlanComputer = maintenancePlanComputerRepository.findById(id)
                 .orElseThrow(() -> new NoContentException(

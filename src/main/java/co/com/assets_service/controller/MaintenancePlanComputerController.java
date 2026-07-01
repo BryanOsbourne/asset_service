@@ -37,6 +37,19 @@ public class MaintenancePlanComputerController {
     }
 
     @GetMapping(
+            value = "/findAll",
+            params = {"page", "size", "computerId"}
+    )
+    public ResponseEntity<Page<MaintenancePlanComputerResponseDTO>> findAllByComputerId(
+            @RequestParam int page,
+            @RequestParam int size,
+            @RequestParam Long computerId
+    ) {
+        LOGGER.info("MaintenancePlanComputerController - findAllByComputerId - page: {}, size: {}, computerId: {}", page, size, computerId);
+        return new ResponseEntity<>(maintenancePlanComputerService.findAllByComputerId(page, size, computerId), HttpStatus.OK);
+    }
+
+    @GetMapping(
             value = "/findById",
             params = {"maintenancePlanComputerId"}
     )

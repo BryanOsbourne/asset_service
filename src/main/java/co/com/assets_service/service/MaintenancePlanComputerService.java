@@ -11,6 +11,7 @@ public interface MaintenancePlanComputerService {
     MaintenancePlanComputerResponseDTO findById(Long id);
     MaintenancePlanComputerResponseDTO completed(Long id);
     MaintenancePlanComputerResponseDTO reprogram(Long id, LocalDateTime datePlanning);
+    Page<MaintenancePlanComputerResponseDTO> findAllByComputerId(int page, int size, Long computerId);
     Page<MaintenancePlanComputerResponseDTO> findAllByMaintenancePlanId(int page, int size, Long userId);
     MaintenancePlanComputerResponseDTO create(MaintenancePlanComputerCreateDTO maintenancePlanComputerCreateDTO);
     MaintenancePlanComputerResponseDTO update(MaintenancePlanComputerUpdateDTO maintenancePlanComputerUpdateDTO);
