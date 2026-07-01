@@ -44,10 +44,10 @@ public class MaintenancePlanComputerController {
     public ResponseEntity<Page<MaintenancePlanComputerResponseDTO>> findAllByState(
             @RequestParam int page,
             @RequestParam int size,
-            @RequestParam MaintenancePlanningState maintenancePlanningState
+            @RequestParam MaintenancePlanningState state
     ) {
-        LOGGER.info("MaintenancePlanComputerController - findAllByState - page: {}, size: {}, maintenancePlanningState: {}", page, size, maintenancePlanningState);
-        return new ResponseEntity<>(maintenancePlanComputerService.findAllByState(page, size, maintenancePlanningState), HttpStatus.OK);
+        LOGGER.info("MaintenancePlanComputerController - findAllByState - page: {}, size: {}, maintenancePlanningState: {}", page, size, state);
+        return new ResponseEntity<>(maintenancePlanComputerService.findAllByState(page, size, state), HttpStatus.OK);
     }
 
     @GetMapping(
