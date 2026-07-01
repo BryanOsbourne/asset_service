@@ -1,6 +1,7 @@
 package co.com.assets_service.controller;
 
 import org.slf4j.Logger;
+
 import java.time.LocalDateTime;
 import org.slf4j.LoggerFactory;
 import jakarta.validation.Valid;
@@ -35,6 +36,18 @@ public class MaintenancePlanComputerController {
     ) {
         LOGGER.info("MaintenancePlanComputerController - findAllByMaintenancePlanId - page: {}, size: {}, userId: {}", page, size, maintenancePlanId);
         return new ResponseEntity<>(maintenancePlanComputerService.findAllByMaintenancePlanId(page, size, maintenancePlanId), HttpStatus.OK);
+    }
+
+    @GetMapping(
+            value = "/findAll",
+            params = {"page", "size"}
+    )
+    public ResponseEntity<Page<MaintenancePlanComputerResponseDTO>> findAll(
+            @RequestParam int page,
+            @RequestParam int size
+            ) {
+        LOGGER.info("MaintenancePlanComputerController - findAll - page: {}, size: {}", page, size);
+        return new ResponseEntity<>(maintenancePlanComputerService.findAll(page, size), HttpStatus.OK);
     }
 
     @GetMapping(

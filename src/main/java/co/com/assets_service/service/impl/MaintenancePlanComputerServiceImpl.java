@@ -1,6 +1,7 @@
 package co.com.assets_service.service.impl;
 
 import java.time.LocalDateTime;
+
 import co.com.assets_service.model.*;
 import lombok.RequiredArgsConstructor;
 import jakarta.transaction.Transactional;
@@ -178,6 +179,15 @@ public class MaintenancePlanComputerServiceImpl implements MaintenancePlanComput
         return maintenancePlanComputerMapper.entityToResponseDTO(
                 maintenancePlanComputerRepository.save(maintenancePlanComputer)
         );
+    }
+
+    @Override
+    public Page<MaintenancePlanComputerResponseDTO> findAll(int page, int size) {
+        Page<MaintenancePlanComputer> maintenancePlanComputers = maintenancePlanComputerRepository.findAll(
+                PageRequest.of(page, size, Sort.by("id").ascending()));
+        if (maintenancePlanComputers.isEmpty())
+            throw new NoContentException("MaintenancePlanComputers-Not-Content-204", HttpStatus.NOT_FOUND, "No MaintenancePlanComputers found");
+        return maintenancePlanComputers.map(maintenancePlanComputerMapper::entityToResponseDTO);
     }
 
     @Override
