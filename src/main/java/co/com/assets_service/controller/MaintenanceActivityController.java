@@ -35,6 +35,18 @@ public class MaintenanceActivityController {
         return new ResponseEntity<>(maintenanceActivityService.findAllByMaintenanceComputerId(page, size, maintenanceComputerId), HttpStatus.OK);
     }
 
+    @GetMapping(
+            value = "/findAll",
+            params = {"page", "size"}
+    )
+    public ResponseEntity<Page<MaintenanceActivityResponseDTO>> findAll(
+            @RequestParam int page,
+            @RequestParam int size
+    ) {
+        LOGGER.info("MaintenanceActivityController - findAllByMaintenanceComputerId - page: {}, size: {}", page, size);
+        return new ResponseEntity<>(maintenanceActivityService.findAll(page, size), HttpStatus.OK);
+    }
+
     @PostMapping(
             value = "/create",
             consumes = "application/json",

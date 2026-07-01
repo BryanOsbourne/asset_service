@@ -29,6 +29,15 @@ public class MaintenanceActivityServiceImpl implements MaintenanceActivityServic
     private final MaintenanceActivityRepository maintenanceActivityRepository;
 
     @Override
+    public Page<MaintenanceActivityResponseDTO> findAll(int page, int size) {
+        Page<MaintenanceActivity> maintenancesActivities = maintenanceActivityRepository.findAll(
+                PageRequest.of(page, size, Sort.by("id").ascending()));
+        if (maintenancesActivities.isEmpty())
+            throw new NoContentException("MaintenancesActivities-Not-Content-204", HttpStatus.NOT_FOUND, "No MaintenancesActivities found");
+        return maintenancesActivities.map(maintenanceActivityMapper::entityToResponseDTO);
+    }
+
+    @Override
     public Page<MaintenanceActivityResponseDTO> findAllByMaintenanceComputerId(int page, int size, Long maintenanceComputerId) {
         Page<MaintenanceActivity> maintenancesActivities = maintenanceActivityRepository.findAllByMaintenanceComputerId(
                 maintenanceComputerId,
