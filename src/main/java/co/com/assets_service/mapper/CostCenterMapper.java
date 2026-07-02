@@ -8,7 +8,7 @@ import co.com.assets_service.dto.CostCenterResponseDTO;
 
 @Mapper(componentModel = "spring")
 public interface CostCenterMapper {
-    CostCenter createDTOToEntity(CostCenterCreateDTO costCenterCreateDTO);
     CostCenterResponseDTO entityToResponseDTO(CostCenter costCenter);
+    CostCenter createDTOToEntity(CostCenterCreateDTO costCenterCreateDTO);
     CostCenter updateDTOToEntity(CostCenterUpdateDTO costCenterUpdateDTO);
 }
