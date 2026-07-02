@@ -57,6 +57,11 @@ public class Computer {
     @JsonBackReference
     private Employee employee;
 
+    @ManyToOne
+    @JoinColumn(name = "department_id", nullable = false)
+    @JsonBackReference
+    private Department department;
+
     @OneToMany(
             mappedBy = "computer",
             cascade = CascadeType.ALL,

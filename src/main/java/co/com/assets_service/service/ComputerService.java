@@ -8,6 +8,7 @@ import co.com.assets_service.dto.ComputerResponseDTO;
 public interface ComputerService {
     ComputerResponseDTO findById(Long id);
     Page<ComputerResponseDTO> findAll(int page, int size);
+    ComputerResponseDTO relocate(Long id, Long departmentId);
     ComputerResponseDTO assignEmployee(Long id, Long employeeId);
     ComputerResponseDTO createComputer(ComputerCreateDTO computerCreateDTO);
     ComputerResponseDTO updateComputer(ComputerUpdateDTO computerUpdateDTO);

@@ -35,4 +35,8 @@ public class ComputerCreateDTO {
     @Positive(message = "The fields is required")
     @NotNull(message = "The fields is required")
     private Long employeeId;
+
+    @Positive(message = "The fields is required")
+    @NotNull(message = "The fields is required")
+    private Long departmentId;
 }

@@ -23,6 +23,7 @@ public interface ComputerMapper {
     @Mapping(source = "manufacturer", target = "manufacturerResponseDTO")
     @Mapping(source = "internalCode", target = "internalCodeResponseDTO")
     @Mapping(source = "employee", target = "employeeResponseDTO")
+    @Mapping(source = "department", target = "departmentResponseDTO")
     ComputerResponseDTO entityToResponseDTO(Computer computer);
     Computer createDTOToEntity(ComputerCreateDTO computerCreateDTO);
     Computer updateDTOToEntity(ComputerUpdateDTO computerUpdateDTO);

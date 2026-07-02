@@ -10,6 +10,7 @@ public class MaintenancePlanComputerResponseDTO {
     private Long id;
     private LocalDateTime datePlanning;
     private LocalDateTime dateExecuted;
+    private LocalDateTime dateCreation;
     @JsonProperty("computer")
     private ComputerResponseDTO computerResponseDTO;
     @JsonProperty("maintenance_plan")

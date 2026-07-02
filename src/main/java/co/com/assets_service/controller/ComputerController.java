@@ -70,4 +70,13 @@ public class ComputerController {
         return new ResponseEntity<>(computerService.assignEmployee(id, employeeId), HttpStatus.OK);
     }
 
+    @PatchMapping(
+            value = "/relocate",
+            params = {"id","departmentId"}
+    )
+    public ResponseEntity<ComputerResponseDTO> relocate(@RequestParam Long id, @RequestParam Long departmentId) {
+        LOGGER.info("ComputerController - relocate - id: {}, departmentId: {}", id, departmentId);
+        return new ResponseEntity<>(computerService.relocate(id, departmentId), HttpStatus.OK);
+    }
+
 }

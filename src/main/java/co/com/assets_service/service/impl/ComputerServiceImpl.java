@@ -26,6 +26,7 @@ public class ComputerServiceImpl implements ComputerService {
     private final StateRepository stateRepository;
     private final ComputerRepository computerRepository;
     private final EmployeeRepository employeeRepository;
+    private final DepartmentRepository departmentRepository;
     private final InternalCodeRepository internalCodeRepository;
     private final TypeComputerRepository typeComputerRepository;
     private final ManufacturerRepository manufacturerRepository;
@@ -48,6 +49,25 @@ public class ComputerServiceImpl implements ComputerService {
         if (computers.isEmpty())
             throw new NoContentException("Computers-Not-Content-204", HttpStatus.NOT_FOUND, "No Computers found");
         return computers.map(computerMapper::entityToResponseDTO);
+    }
+
+    @Override
+    public ComputerResponseDTO relocate(Long id, Long departmentId) {
+        Computer computer = computerRepository.findById(id)
+                .orElseThrow(() -> new NoContentException(
+                        "Computer-Not-Found-404",
+                        HttpStatus.NOT_FOUND,
+                        "Computer not found"
+                ));
+
+        if (!computer.getIsEnabled())
+            throw new BusinessException("Computer-Not-Enabled-400", HttpStatus.BAD_REQUEST, "Computer not enabled");
+
+        computer.setDepartment(getDepartment(departmentId));
+
+        return computerMapper.entityToResponseDTO(
+                computerRepository.save(computer)
+        );
     }
 
     @Override
@@ -99,6 +119,7 @@ public class ComputerServiceImpl implements ComputerService {
         Computer computer = computerMapper.createDTOToEntity(computerCreateDTO);
         computer.setState(getState(computerCreateDTO.getStateId()));
         computer.setEmployee(getEmployee(computerCreateDTO.getEmployeeId()));
+        computer.setDepartment(getDepartment(computerCreateDTO.getDepartmentId()));
         computer.setManufacturer(getManufacturer(computerCreateDTO.getManufacturerId()));
         computer.setTypeComputer(getTypeComputer(computerCreateDTO.getTypeComputerId()));
         return computer;
@@ -167,6 +188,15 @@ public class ComputerServiceImpl implements ComputerService {
                         "Employee-Not-Found-404",
                         HttpStatus.NOT_FOUND,
                         "Employee not found"
+                ));
+    }
+
+    private Department getDepartment(Long id) {
+        return departmentRepository.findById(id)
+                .orElseThrow(() -> new NoContentException(
+                        "Department-Not-Found-404",
+                        HttpStatus.NOT_FOUND,
+                        "Department not found"
                 ));
     }
 
