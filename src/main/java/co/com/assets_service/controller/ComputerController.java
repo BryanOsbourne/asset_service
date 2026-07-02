@@ -34,6 +34,14 @@ public class ComputerController {
     }
 
     @GetMapping(
+            value = "/count"
+    )
+    public ResponseEntity<Long> countComputer() {
+        LOGGER.info("ComputerController - countComputer");
+        return new ResponseEntity<>(computerService.countComputer(), HttpStatus.OK);
+    }
+
+    @GetMapping(
             value = "/findById",
             params = {"id"}
     )

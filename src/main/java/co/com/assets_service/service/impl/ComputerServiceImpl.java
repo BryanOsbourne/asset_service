@@ -32,6 +32,11 @@ public class ComputerServiceImpl implements ComputerService {
     private final ManufacturerRepository manufacturerRepository;
 
     @Override
+    public Long countComputer() {
+        return computerRepository.count();
+    }
+
+    @Override
     public ComputerResponseDTO findById(Long id) {
         Computer computer = computerRepository.findById(id).orElseThrow(
                 () -> new NoContentException(

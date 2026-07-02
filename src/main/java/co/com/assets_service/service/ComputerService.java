@@ -6,6 +6,7 @@ import co.com.assets_service.dto.ComputerUpdateDTO;
 import co.com.assets_service.dto.ComputerResponseDTO;
 
 public interface ComputerService {
+    Long countComputer();
     ComputerResponseDTO findById(Long id);
     Page<ComputerResponseDTO> findAll(int page, int size);
     ComputerResponseDTO relocate(Long id, Long departmentId);
