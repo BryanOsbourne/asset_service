@@ -8,6 +8,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 public class MaintenanceComputerResponseDTO {
     private Long id;
     private MaintenanceType type;
-    @JsonProperty("maintenance_plan_computer")
+    @JsonProperty("maintenancePlanComputer")
     private MaintenancePlanComputerResponseDTO maintenancePlanComputerResponseDTO;
 }

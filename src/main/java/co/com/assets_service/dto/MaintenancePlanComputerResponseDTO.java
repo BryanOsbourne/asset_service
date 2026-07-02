@@ -13,7 +13,7 @@ public class MaintenancePlanComputerResponseDTO {
     private LocalDateTime dateCreation;
     @JsonProperty("computer")
     private ComputerResponseDTO computerResponseDTO;
-    @JsonProperty("maintenance_plan")
+    @JsonProperty("maintenancePlan")
     private MaintenancePlanResponseDTO maintenancePlanResponseDTO;
     private MaintenancePlanningState state;
 }

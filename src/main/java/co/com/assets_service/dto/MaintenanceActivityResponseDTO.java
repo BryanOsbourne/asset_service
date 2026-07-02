@@ -12,6 +12,6 @@ public class MaintenanceActivityResponseDTO {
     private String observation;
     private LocalDateTime dateCreation;
     private MaintenanceTypeActivity maintenanceTypeActivity;
-    @JsonProperty("maintenance_computer")
+    @JsonProperty("maintenanceComputer")
     private MaintenanceComputerResponseDTO maintenanceComputerResponseDTO;
 }
