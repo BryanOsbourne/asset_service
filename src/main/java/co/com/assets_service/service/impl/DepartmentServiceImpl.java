@@ -35,6 +35,14 @@ public class DepartmentServiceImpl implements DepartmentService {
     }
 
     @Override
+    public List<DepartmentResponseDTO> findAllByCostCenterId(Long costCenterId) {
+        List<Department> DepartmentList = departmentRepository.findAllByCostCenterId(costCenterId);
+        if (DepartmentList.isEmpty())
+            throw new NoContentException("Department-Not-Content-204", HttpStatus.NOT_FOUND, "No Departments found");
+        return DepartmentList.stream().map(departmentMapper::entityToResponseDTO).toList();
+    }
+
+    @Override
     @Transactional
     public DepartmentResponseDTO createDepartment(DepartmentCreateDTO departmentCreateDTO) {
         departmentCreateDTO.setName(Utils.normalizeName(departmentCreateDTO.getName()));

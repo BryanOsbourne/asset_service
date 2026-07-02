@@ -30,6 +30,15 @@ public class DepartmentController {
         return new ResponseEntity<>(DepartmentService.getAllDepartments(), HttpStatus.OK);
     }
 
+    @GetMapping(
+            value = "/findAll",
+            produces = "application/json",
+            params = {"costCenterId"}
+    )
+    public ResponseEntity<List<DepartmentResponseDTO>> findAllByCostCenterId(@RequestParam Long costCenterId) {
+        return new ResponseEntity<>(DepartmentService.findAllByCostCenterId(costCenterId), HttpStatus.OK);
+    }
+
     @PostMapping(
             value = "/create",
             consumes = "application/json",
